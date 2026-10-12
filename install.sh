@@ -21,7 +21,9 @@ SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 for item in extension/manifest.json extension/theme.js com.claude-themes.env.plist uninstall.sh; do
   [ -f "$SOURCE/$item" ] || fail "Missing $item. Clone or download the complete repository before installing."
 done
-plutil -lint "$SOURCE/extension/manifest.json" "$SOURCE/com.claude-themes.env.plist" >/dev/null
+plutil -lint "$SOURCE/com.claude-themes.env.plist" >/dev/null
+# plutil -lint rejects JSON on recent macOS; a conversion still parses it strictly.
+plutil -convert xml1 -o /dev/null "$SOURCE/extension/manifest.json" || fail 'extension/manifest.json is not valid JSON.'
 [ -s "$SOURCE/extension/theme.js" ] || fail 'The local theme script is empty. Rebuild it with node build.mjs.'
 bash -n "$SOURCE/uninstall.sh"
 
