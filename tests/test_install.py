@@ -8,7 +8,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 STUB = '''#!/usr/bin/env python3
-import json, os, pathlib, shutil, sys
+import json, os, pathlib, plistlib, shutil, sys
 name = pathlib.Path(sys.argv[0]).name
 args = sys.argv[1:]
 if name == 'uname': print('Darwin')
@@ -20,8 +20,21 @@ elif name in ('open', 'osascript', 'kill', 'killall', 'pkill'):
 elif name in ('curl', 'wget', 'git'):
     pathlib.Path(os.environ['NETWORK']).write_text(name)
     sys.exit(99)
-elif name == 'plutil' and '-extract' in args:
-    print(json.loads(pathlib.Path(args[-1]).read_text())['name'])
+elif name == 'plutil':
+    try:
+        if '-lint' in args:
+            for file in args[1:]:
+                plistlib.loads(pathlib.Path(file).read_bytes())
+        elif '-convert' in args and args[args.index('-convert') + 1] == 'xml1':
+            value = json.loads(pathlib.Path(args[-1]).read_text())
+            plistlib.dumps(value)
+        elif '-extract' in args:
+            print(json.loads(pathlib.Path(args[-1]).read_text())['name'])
+        else:
+            raise ValueError('Unexpected plutil command: ' + repr(args))
+    except Exception as error:
+        print(error, file=sys.stderr)
+        sys.exit(1)
 elif name == 'launchctl':
     with open(os.environ['CALLS'], 'a') as f: f.write(' '.join(args) + '\\n')
 '''
@@ -47,6 +60,13 @@ class InstallerTests(unittest.TestCase):
             target = self.source / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / relative, target)
+        self.system_app = Path(self.temp.name) / 'system/Applications/Claude.app'
+        installer = self.source / 'install.sh'
+        text = installer.read_text()
+        self.assertEqual(text.count('/Applications/Claude.app "$HOME/Applications/Claude.app"'), 1)
+        installer.write_text(text.replace(
+            '/Applications/Claude.app "$HOME/Applications/Claude.app"',
+            '"' + str(self.system_app) + '" "$HOME/Applications/Claude.app"'))
         self.network = Path(self.temp.name) / 'network-call'
         self.lifecycle = Path(self.temp.name) / 'lifecycle-call'
         self.env = dict(os.environ, HOME=str(self.home), NETWORK=str(self.network),
@@ -115,6 +135,43 @@ class InstallerTests(unittest.TestCase):
         self.run_script('install.sh', False)
         self.assertFalse(self.ext.exists())
 
+    def test_system_app_takes_precedence_without_using_host_app(self):
+        asar = self.system_app / 'Contents/Resources/app.asar'
+        asar.parent.mkdir(parents=True)
+        asar.write_text('no hook')
+        self.run_script('install.sh', False)
+        self.assertFalse(self.ext.exists())
+        asar.write_text('loadReactDevTools')
+        self.asar.write_text('no hook')
+        self.run_script('install.sh')
+
+    def test_missing_app_leaves_install_untouched(self):
+        self.asar.unlink()
+        self.run_script('install.sh', False)
+        self.assertFalse(self.ext.exists())
+        self.assertFalse(self.state.exists())
+
+    def test_invalid_manifest_leaves_existing_install_untouched(self):
+        self.run_script('install.sh')
+        before = (self.ext / 'theme.js').read_bytes()
+        (self.source / 'extension/manifest.json').write_text('{"name":')
+        result = self.run_script('install.sh', False)
+        self.assertIn('extension/manifest.json is not valid JSON', result.stderr)
+        self.assertEqual((self.ext / 'theme.js').read_bytes(), before)
+
+    def test_invalid_manifest_leaves_new_install_untouched(self):
+        (self.source / 'extension/manifest.json').write_text('{"name":')
+        self.run_script('install.sh', False)
+        self.assertFalse(self.ext.exists())
+        self.assertFalse(self.state.exists())
+        self.assertFalse(self.plist.exists())
+
+    def test_invalid_plist_leaves_install_untouched(self):
+        (self.source / 'com.claude-themes.env.plist').write_text('<plist>')
+        self.run_script('install.sh', False)
+        self.assertFalse(self.ext.exists())
+        self.assertFalse(self.state.exists())
+
     def test_preserve_other_extension(self):
         self.ext.mkdir(parents=True)
         manifest = self.ext / 'manifest.json'
@@ -142,6 +199,14 @@ class InstallerTests(unittest.TestCase):
         self.ext.symlink_to(self.home)
         self.run_script('install.sh', False)
         self.assertFalse(self.state.exists())
+
+
+@unittest.skipUnless(os.uname().sysname == 'Darwin', 'Requires real macOS plutil')
+class MacInstallerTests(InstallerTests):
+    def setUp(self):
+        super().setUp()
+        (self.bin / 'plutil').unlink()
+        (self.bin / 'plutil').symlink_to('/usr/bin/plutil')
 
 
 if __name__ == '__main__':
