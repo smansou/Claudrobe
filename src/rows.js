@@ -55,30 +55,52 @@
   function rowsFor(id) {
     if (!rowAttr) return [];
     try {
-      return [...document.querySelectorAll(`[${rowAttr}*="${CSS.escape(id)}"]`)];
+      return [...document.querySelectorAll(`[${rowAttr}*="${CSS.escape(id)}"]`)]
+        .filter(el => !el.closest(PANE_SEL) && !el.closest(`#${HOST_ID}`));
     } catch { return []; }
   }
 
   function paintRows() {
-    const ids = Object.keys(sessionMap).filter(k => sessionMap[k]);
+    const ids = [...new Set([...Object.keys(sessionMap).filter(k => sessionMap[k]), ...Object.keys(sessionIcons)])];
     discoverRowAttr(ids);
 
     const want = new Map();
     for (const id of ids) {
       for (const el of rowsFor(id)) {
-        if (rowSized(el.getBoundingClientRect())) want.set(el, sessionMap[id]);
+        if (rowSized(el.getBoundingClientRect())) want.set(el, { color: colorForSession(id), icon: iconForSession(id) });
       }
     }
     for (const el of document.querySelectorAll('[data-cdt-row]')) {
-      if (!want.has(el)) { el.removeAttribute('data-cdt-row'); el.style.removeProperty('--cdt-row-accent'); }
+      if (!want.has(el) || !want.get(el).color) { el.removeAttribute('data-cdt-row'); el.style.removeProperty('--cdt-row-accent'); }
     }
-    for (const [el, color] of want) {
-      el.setAttribute('data-cdt-row', '');
-      el.style.setProperty('--cdt-row-accent', color);
+    for (const el of document.querySelectorAll('[data-cdt-avatar]')) {
+      if (!want.get(el)?.icon) {
+        el.removeAttribute('data-cdt-avatar');
+        el.style.removeProperty('--cdt-avatar-mask');
+        el.style.removeProperty('--cdt-avatar-pad');
+      }
+    }
+    for (const [el, { color, icon }] of want) {
+      if (color) {
+        el.setAttribute('data-cdt-row', '');
+        el.style.setProperty('--cdt-row-accent', color);
+      }
+      if (icon) {
+        if (!el.hasAttribute('data-cdt-avatar')) {
+          el.style.setProperty('--cdt-avatar-pad', getComputedStyle(el).paddingInlineStart);
+        }
+        el.setAttribute('data-cdt-avatar', icon);
+        el.style.setProperty('--cdt-avatar-mask', iconMask(icon));
+      }
     }
   }
 
   const clearRows = () => {
+    for (const a of document.querySelectorAll('[data-cdt-avatar]')) {
+      a.removeAttribute('data-cdt-avatar');
+      a.style.removeProperty('--cdt-avatar-mask');
+      a.style.removeProperty('--cdt-avatar-pad');
+    }
     for (const a of document.querySelectorAll('[data-cdt-row]')) {
       a.removeAttribute('data-cdt-row');
       a.style.removeProperty('--cdt-row-accent');

@@ -56,15 +56,16 @@
   const mixHex = (a, b, t) => { const x = hex2rgb(hex6(a)), y = hex2rgb(hex6(b));
     return rgb2hex(x.map((v, i) => v * t + y[i] * (1 - t))); };
   const propValue = (t, k) => k.startsWith('s.') ? (t.semantic || {})[k.slice(2)] || null
-                            : k === 'raised' ? effRaised(t) : t[k];
+                            : k === 'raised' ? effRaised(t) : k === 'deep' ? effDeep(t) : t[k];
 
   /** The first edit turns the selection into the draft. */
   function ensureDraft() {
     if (current.slug === DRAFT) return current;
     const src = editable(current);
     const d = JSON.parse(JSON.stringify(src));
+    d.deep = effDeep(src);
     delete d.isDefault;
-    Object.assign(d, { slug: DRAFT, label: 'Custom', basedOn: src.label, mode: src.mode || appMode() });
+    Object.assign(d, { slug: DRAFT, label: 'Custom', basedOn: src.label, mode: src.mode || appMode(), brightness: textOpts.brightness });
     current = d;
     localStorage.setItem(themeKey(), DRAFT);
     writeJSON(draftKey(), d);
@@ -79,13 +80,14 @@
     if (k.startsWith('s.')) d.semantic = { ...(d.semantic || {}), [k.slice(2)]: v };
     else if (v === undefined) delete d[k];
     else d[k] = v;
+    d.brightness = textOpts.brightness;
     writeJSON(draftKey(), d);
     applySoon();
   }
   function saveDraft(name) {
     name = (name || '').trim() || `My theme ${customThemes.length + 1}`;
     const same = customThemes.find(t => t.label === name && t.mode === current.mode);
-    const t = { ...current, slug: same ? same.slug : 'user:' + Date.now().toString(36), label: name };
+    const t = { ...current, brightness: textOpts.brightness, slug: same ? same.slug : 'user:' + Date.now().toString(36), label: name };
     delete t.basedOn;
     customThemes = same ? customThemes.map(x => x.slug === t.slug ? t : x) : [...customThemes, t];
     writeJSON(LS_CUSTOM, customThemes);

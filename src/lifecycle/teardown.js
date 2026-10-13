@@ -10,6 +10,8 @@
     observer.disconnect(); modeObserver.disconnect();
     clearTimeout(pending); clearInterval(visTimer);
     if (rafId) cancelAnimationFrame(rafId);
+    if (accentRaf) cancelAnimationFrame(accentRaf);
+    if (visRaf) cancelAnimationFrame(visRaf);
     mql.removeEventListener?.('change', onModeChange);
     history.pushState = origPush; history.replaceState = origReplace;
     window.open = origOpen;

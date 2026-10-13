@@ -94,7 +94,7 @@
           <button class="mini" id="tintAuto" aria-selected="${tintVal == null}">Auto</button></div>
         <div class="hint">How much of the palette's hue the backgrounds carry. Auto fades it out on surfaces.</div>
         <div class="sl"><span>Border strength</span>
-          <input type="range" id="bmin" min="110" max="300" value="${Math.round((ed.borderMin || 1.45) * 100)}"></div>
+          <input type="range" id="bmin" min="110" max="300" value="${Math.round((ed.borderMin || (ed.mode === 'light' ? 1.65 : 1.45)) * 100)}"></div>
       </div>`;
 
     const textIsDefault = Object.keys(TEXT_DEFAULTS).every(k => (textOpts[k] ?? '') === TEXT_DEFAULTS[k]);
@@ -108,6 +108,7 @@
       </div></div>
       <div class="row"><b>Brightness</b>
         <input type="range" id="bright" min="0" max="100" value="${textOpts.brightness}">
+        <div class="hint">Each theme supplies its text colours and brightness. Switching themes resets brightness, not fonts or weight.</div>
       </div>
       <div class="row"><b>App font</b>
         ${fontSelect('font', FONTS, false)}${customField('font')}
@@ -140,9 +141,9 @@
         ${[['off', 'Off'], ['most', 'On']].map(([m, l]) => `<button data-expand="${m}"
           aria-selected="${expandMode === m}">${l}</button>`).join('')}
       </div>
-        <div class="hint">In a split, the pane under the pointer grows over the others, leaving a strip of each
-          showing, and shrinks back when the pointer leaves it. <b>Click</b> a pane to keep it large; click
-          anywhere outside it to let go.</div></div>
+        <div class="hint">Hover over a pane briefly to expand it smoothly, leaving a strip of its neighbours showing.
+          Passing across panes or clicking before expansion does not enlarge them instantly.
+          <b>Click the expanded pane</b> to keep it large; click outside it to let go.</div></div>
       <div class="row"><b>Status on titles</b><div class="seg">
         <button data-tstatus="on" aria-selected="${titleStatus}">On</button>
         <button data-tstatus="off" aria-selected="${!titleStatus}">Off</button>
@@ -168,8 +169,10 @@
      ours opts out, as the app's own title-bar buttons do. */
   .trigger, .panel, .pick, .dots { -webkit-app-region: no-drag; app-region: no-drag; }
   .trigger { position: fixed; width: ${TRIG}px; height: ${TRIG}px; border-radius: 7px; border: 0;
-             padding: 0; background: transparent; cursor: pointer; pointer-events: auto;
+             padding: 0; background: ${panelBg}; cursor: pointer; pointer-events: auto;
+             box-shadow: 0 0 0 1px ${line};
              display: grid; place-items: center; }
+  .trigger[data-floating] { background: ${T.base}; border: 1px solid ${line}; box-shadow: 0 2px 8px #0003; }
   .trigger:hover, .trigger[aria-expanded="true"] { background: color-mix(in srgb, ${T.text} 10%, transparent); }
   .trigger i { width: 15px; height: 15px; border-radius: 50%; background: ${WHEEL};
                box-shadow: inset 0 0 0 3.5px ${panelBg}, 0 0 0 1px color-mix(in srgb, ${T.text} 30%, transparent);
@@ -264,20 +267,25 @@
 
   /* Session colour: a dot in each pane's title bar. Hollow until a colour is
      chosen, so it is visible — and recognisably a colour slot — either way. */
-  .pick { position: fixed; transform: translate(-50%, -50%); width: 22px; height: 22px;
-          border-radius: 6px; border: 0; padding: 0; background: transparent; cursor: pointer;
-          pointer-events: auto; display: grid; place-items: center; }
-  .pick:hover, .pick[aria-expanded="true"] { background: color-mix(in srgb, ${T.text} 10%, transparent); }
-  .pick i { width: 11px; height: 11px; border-radius: 50%;
-            border: 1.5px solid color-mix(in srgb, ${T.text} 50%, transparent); }
-  .pick.on i { border: 0; background: var(--c);
-               box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--c) 28%, transparent); }
+  .pick { position: fixed; transform: translate(-50%, -50%); width: 24px; height: 24px;
+          border-radius: 6px; border: 1px solid ${line}; padding: 0; background: ${panelBg};
+          color: ${T.text}; cursor: pointer; pointer-events: auto; display: grid; place-items: center; }
+  .pick:hover, .pick[aria-expanded="true"] { background: ${T.base}; border-color: ${T.accent}; }
+  .pick.on { border-color: var(--c); box-shadow: inset 0 -2px var(--c); }
+  .pick svg, .avatar svg { width: 17px; height: 17px; }
+  .avatarRow { flex: 100%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
+               border-top: 1px solid ${line}; padding-top: 8px; }
+  .avatarRow > span { grid-column: 1 / -1; color: ${muted}; font-size: 10.5px; }
+  .avatar { display: grid; place-items: center; height: 30px; border: 1px solid ${line};
+            border-radius: 6px; cursor: pointer; color: ${T.text}; background: ${T.base}; }
+  .avatar[aria-pressed="true"] { border-color: ${T.accent}; background: ${panelBg}; }
+  button:focus-visible { outline: 2px solid ${T.accent}; outline-offset: 2px; }
   .dots { position: fixed; width: ${DOTS_W}px; display: flex; flex-wrap: wrap; gap: 6px; padding: 9px;
           border-radius: 12px; background: ${panelBg}; border: 1px solid ${line};
           box-shadow: 0 8px 24px #0009; pointer-events: auto; }
   .cs { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
   .cs:hover { transform: scale(1.12); }
-  .cs[aria-selected="true"] { border-color: ${T.text}; }
+  .cs[aria-selected="true"], .cs[aria-pressed="true"] { border-color: ${T.text}; }
   .cs.wheel { position: relative; background: ${WHEEL}; overflow: hidden; }
   .cs.wheel.mine { background: var(--c); box-shadow: inset 0 0 0 2px ${panelBg}; }
   .cs.wheel input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
@@ -295,17 +303,22 @@
   .widthRow input { flex: 1; min-width: 0; }
 </style>
 
-${paneInfo.map((p, i) => { const c = colorForSession(p.id); return `
-<button class="pick${c ? ' on' : ''}" data-i="${i}" title="Session colour" aria-label="Session colour"
-  aria-expanded="${accentOpen === i}" style="display:none;${c ? `--c:${c}` : ''}"><i></i></button>`; }).join('')}
+${paneInfo.map((p, i) => { const c = colorForSession(p.id), icon = iconForSession(p.id); return `
+<button class="pick${c ? ' on' : ''}" data-i="${i}" title="Personalize session: colour, border and avatar" aria-label="Personalize session${icon ? ': ' + SESSION_ICONS.find(x => x[0] === icon)[1] : ''}"
+  aria-expanded="${accentOpen === i}" style="display:none;${c ? `--c:${c}` : ''}">${iconSVG(icon || 'personalize')}</button>`; }).join('')}
 
 ${openPane ? `<div class="dots" style="display:none">
-  <span class="cs none" data-color="" aria-selected="${!active}" title="No colour"></span>
-  ${SESSION_COLORS.map(([c, name]) => `<span class="cs" data-color="${c}" style="background:${c}"
-    title="${name}" aria-selected="${c === active}"></span>`).join('')}
+  <button class="cs none" data-color="" aria-pressed="${!active}" title="No colour" aria-label="No colour"></button>
+  ${SESSION_COLORS.map(([c, name]) => `<button class="cs" data-color="${c}" style="background:${c}"
+    title="${name}" aria-label="${name}" aria-pressed="${c === active}"></button>`).join('')}
   <label class="cs wheel${activeCustom ? ' mine' : ''}" title="Any colour" aria-selected="${activeCustom}"
     style="${activeCustom ? `--c:${active}` : ''}"><input type="color" id="anyColor"
     value="${hex6(active || '#ff453a')}"></label>
+  <div class="avatarRow">
+    <span>Session avatar</span>
+    <button class="avatar" data-icon="" title="No avatar" aria-label="No avatar" aria-pressed="${!iconForSession(openPane.id)}">${iconSVG('personalize')}</button>
+    ${SESSION_ICONS.map(([id, name]) => `<button class="avatar" data-icon="${id}" title="${name}" aria-label="${name}" aria-pressed="${iconForSession(openPane.id) === id}">${iconSVG(id)}</button>`).join('')}
+  </div>
   <div class="styleRow">
     <button data-border="line" aria-selected="${borderStyle === 'line'}">Line</button>
     <button data-border="glow" aria-selected="${borderStyle === 'glow'}">Glow</button>

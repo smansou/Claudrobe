@@ -30,23 +30,23 @@
   // A strip of each covered pane stays showing, so the pointer can move onto
   // a neighbour.
   //
-  // Clicking a pane locks it large: hovering elsewhere no longer moves
+  // Clicking an expanded pane locks it large: hovering elsewhere no longer moves
   // anything until a click lands outside it, which releases the lock and
   // lets the pane under the pointer take over as if it had just been hovered.
   // Menus the pane opens (portalled outside it) and our own controls count
   // as inside, so using them does not release the lock.
 
-  const EXPAND_MS = 280, HOVER_DELAY = 280, LEAVE_DELAY = 160, PEEK = 64;
+  const EXPAND_MS = 420, HOVER_DELAY = 550, LEAVE_DELAY = 160, PEEK = 64;
   const PIN_PROPS = ['position', 'left', 'top', 'right', 'bottom', 'width', 'height', 'margin',
                      'min-width', 'min-height', 'max-width', 'max-height', 'z-index', 'transition',
-                     'box-shadow', 'background-color', 'filter',
+                     'box-shadow', 'background-color', 'filter', 'opacity', 'isolation', 'mix-blend-mode',
                      'grid-row-start', 'grid-row-end', 'grid-column-start', 'grid-column-end'];
   const PORTALS = '[data-radix-popper-content-wrapper], [role="menu"], [role="dialog"], [role="listbox"], [role="tooltip"]';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-  let pin = null;        // { host, items: Map(el -> { saved, slot }), area, ro }
+  let pin = null;        // { host, items: Map(el -> { saved, slot }), panes, area, ro }
   let expanded = null;   // the pane that is (or is growing) large
-  let hoverPane = null, hoverTimer = 0, leaveTimer = 0, settleTimer = 0, followUntil = 0;
+  let hoverPane = null, hoverPoint = null, hoverTimer = 0, leaveTimer = 0, settleTimer = 0, followUntil = 0, followRaf = 0;
   let locked = false;    // the expanded pane was clicked and stays large
 
   const topPane = el => {
@@ -59,11 +59,14 @@
   /** The colour behind the panes: they are transparent in the app and would
    *  otherwise show their neighbours through them once overlapping. */
   function backdropOf(el) {
-    for (let x = el; x && x !== document.documentElement; x = x.parentElement) {
+    for (let x = el; x; x = x.parentElement) {
       const c = getComputedStyle(x).backgroundColor;
-      if (solid(c)) return c;
+      if (!c || c === 'transparent') continue;
+      const alpha = c.includes('/') ? c.slice(c.lastIndexOf('/') + 1, -1).trim()
+        : /^(rgba|hsla)\(/.test(c) ? c.slice(c.lastIndexOf(',') + 1, -1).trim() : null;
+      if (alpha === null || parseFloat(alpha) === (alpha.endsWith('%') ? 100 : 1)) return c;
     }
-    return getComputedStyle(document.body).backgroundColor;
+    return uiPalette().base;
   }
 
   function pinAll() {
@@ -89,7 +92,7 @@
     const area = { left: Math.min(...slots.map(s => s.left)), top: Math.min(...slots.map(s => s.top)),
                    right: Math.max(...slots.map(s => s.left + s.width)),
                    bottom: Math.max(...slots.map(s => s.top + s.height)) };
-    const bg = backdropOf(host);
+    const backgrounds = new Map(panes.map(p => [p, backdropOf(p)]));
     for (const [c, { slot }] of items) {
       const st = c.style;
       st.setProperty('position', 'absolute', 'important');
@@ -102,7 +105,11 @@
       for (const n of ['min-width', 'min-height']) st.setProperty(n, '0', 'important');
       for (const n of ['max-width', 'max-height']) st.setProperty(n, 'none', 'important');
       for (const n of ['grid-row-start', 'grid-row-end', 'grid-column-start', 'grid-column-end']) st.setProperty(n, 'auto', 'important');
-      if (panes.includes(c) && !solid(getComputedStyle(c).backgroundColor)) st.setProperty('background-color', bg, 'important');
+      if (backgrounds.has(c)) {
+        st.setProperty('background-color', backgrounds.get(c), 'important');
+        st.setProperty('isolation', 'isolate', 'important');
+        st.setProperty('z-index', '0', 'important');
+      }
     }
     // Nothing should have moved. If the host itself resized (its size came
     // from its children after all), undo and leave the layout alone.
@@ -112,16 +119,19 @@
     }
     void host.offsetWidth; // commit the pinned boxes before transitions apply
     const ms = reduceMotion.matches ? 0 : EXPAND_MS;
-    const ease = 'cubic-bezier(.2,.8,.2,1)';
+    const ease = 'cubic-bezier(.4,0,.2,1)';
     for (const c of items.keys()) {
       c.style.setProperty('transition',
         ['left', 'top', 'width', 'height', 'box-shadow'].map(n => `${n} ${ms}ms ${ease}`).join(', '), 'important');
     }
     // A sidebar opening or closing resizes the host without a window resize.
-    let first = true;
-    const ro = new ResizeObserver(() => { if (first) { first = false; return; } resetExpand(); });
+    const ro = new ResizeObserver(() => {
+      if (pin?.ro !== ro) return;
+      const r = host.getBoundingClientRect();
+      if (Math.abs(r.width - hb.width) > 1 || Math.abs(r.height - hb.height) > 1) resetExpand();
+    });
     ro.observe(host);
-    return { host, items, area, ro };
+    return { host, items, panes, area, ro };
   }
 
   function restorePins(items) {
@@ -147,7 +157,7 @@
     st.setProperty('top', `${box.top}px`, 'important');
     st.setProperty('width', `${box.width}px`, 'important');
     st.setProperty('height', `${box.height}px`, 'important');
-    z ? st.setProperty('z-index', String(z), 'important') : st.removeProperty('z-index');
+    st.setProperty('z-index', String(z), 'important');
     // The app dims unfocused panes with filter: opacity(), which would let
     // the covered panes show through a grown one.
     // A locked pane swaps the hairline for an accent ring, so the lock shows.
@@ -155,25 +165,32 @@
       st.setProperty('box-shadow', '0 14px 48px -10px rgba(0,0,0,.55), ' + (locked
         ? '0 0 0 2px var(--cds-fill-accent, #d97757)' : '0 0 0 1px rgba(127,127,127,.18)'), 'important');
       st.setProperty('filter', 'none', 'important');
+      st.setProperty('opacity', '1', 'important');
+      st.setProperty('mix-blend-mode', 'normal', 'important');
     } else {
-      st.removeProperty('box-shadow');
-      if (z !== 49) st.removeProperty('filter');
+      for (const [n, v, pr] of pin.items.get(c).saved) {
+        if (n !== 'box-shadow' && !(z !== 49 && ['filter', 'opacity', 'mix-blend-mode'].includes(n))) continue;
+        v ? st.setProperty(n, v, pr) : st.removeProperty(n);
+      }
     }
   }
 
   /** Our dots and the trigger follow the panes frame by frame while they move. */
   function follow() {
-    followUntil = performance.now() + EXPAND_MS + 80;
+    followUntil = performance.now() + (reduceMotion.matches ? 0 : EXPAND_MS + 80);
+    if (followRaf) return;
     const tick = () => {
+      followRaf = 0;
+      if (!pin) return;
       syncPanes(); positionOverlay();
-      if (performance.now() < followUntil) requestAnimationFrame(tick);
+      if (pin && performance.now() < followUntil) followRaf = requestAnimationFrame(tick);
     };
-    requestAnimationFrame(tick);
+    followRaf = requestAnimationFrame(tick);
   }
 
   function expandPane(p) {
     if (expandMode === 'off' || p === expanded) return;
-    clearTimeout(settleTimer);
+    clearTimeout(settleTimer); settleTimer = 0;
     if (!pin) pin = pinAll();
     if (!pin || !pin.items.has(p)) { resetExpand(); return; }
     const prev = expanded;
@@ -193,21 +210,24 @@
     expanded = null;
     follow();
     clearTimeout(settleTimer);
-    settleTimer = setTimeout(() => { if (!expanded) unpin(); }, (reduceMotion.matches ? 0 : EXPAND_MS) + 60);
+    settleTimer = setTimeout(() => { settleTimer = 0; if (!expanded) unpin(); }, (reduceMotion.matches ? 0 : EXPAND_MS) + 60);
   }
 
   function unpin() {
+    if (followRaf) cancelAnimationFrame(followRaf);
+    followRaf = 0; followUntil = 0;
     if (!pin) return;
     pin.ro.disconnect();
     restorePins(pin.items);
     pin = null;
-    requestAnimationFrame(() => { syncPanes(); positionOverlay(); });
+    syncPanes(); positionOverlay();
   }
 
   /** Straight back to the app's layout, no animation. */
   function resetExpand() {
     clearTimeout(hoverTimer); clearTimeout(leaveTimer); clearTimeout(settleTimer);
-    expanded = null; hoverPane = null; locked = false;
+    hoverTimer = 0; leaveTimer = 0; settleTimer = 0;
+    expanded = null; hoverPane = null; hoverPoint = null; locked = false;
     unpin();
   }
 
@@ -216,39 +236,54 @@
     hoverPane = p;
     if (locked) return;   // remembered, acted on when the lock is released
     clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0;
     if (p && p === expanded) return;
-    if (!p) { leaveTimer = setTimeout(collapsePane, LEAVE_DELAY); return; }
+    if (!p) { leaveTimer = setTimeout(() => { leaveTimer = 0; collapsePane(); }, LEAVE_DELAY); return; }
     hoverTimer = setTimeout(() => {
-      if (hoverPane !== p) return;
-      if (listPanes().length < 2) { resetExpand(); return; }
+      hoverTimer = 0;
+      if (locked || hoverPane !== p || expandMode === 'off') return;
+      if (hoverPoint) {
+        const hit = document.elementFromPoint(hoverPoint.x, hoverPoint.y);
+        if (hit === host || hit?.closest(PORTALS) || topPane(hit) !== p) { pauseHover(); return; }
+      }
+      const panes = listPanes();
+      if (panes.length < 2 || !panes.includes(p)) { resetExpand(); return; }
       expandPane(p);
-    }, expanded ? Math.round(HOVER_DELAY * 0.6) : HOVER_DELAY);
+    }, HOVER_DELAY);
+  }
+
+  function pauseHover() {
+    clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0; hoverPane = undefined;
   }
 
   const onPointerMove = e => {
     if (expandMode === 'off') return;
-    if (host && e.composedPath?.().includes(host)) return;   // our own controls
+    hoverPoint = { x: e.clientX, y: e.clientY };
+    if (host && e.composedPath?.().includes(host)) { pauseHover(); return; }   // our own controls
     const t = e.target;
     if (!(t instanceof Element)) return;
+    if (t.closest(PORTALS)) { pauseHover(); return; }
     const p = topPane(t);
     if (p) return hoverTo(p);
     if (t.closest('.dframe-pane-host')) return;             // a divider between panes
-    if (t.closest(PORTALS)) return;                         // a menu opened from the pane
     hoverTo(null);
   };
   const onPointerLeaveDoc = () => { if (expandMode !== 'off') hoverTo(null); };
 
   /** Capture phase, so it sees the press before the app can stop it. A press
-   *  on a pane locks it — growing it first if the hover delay has not run out
-   *  yet; a press outside the locked pane releases it. */
+   *  on an expanded pane locks it; a press outside the locked pane releases it.
+   *  Other panes still wait for the hover delay. */
   const onPointerDown = e => {
     if (expandMode === 'off' || e.button !== 0) return;
-    if (host && e.composedPath?.().includes(host)) return;
+    hoverPoint = { x: e.clientX, y: e.clientY };
+    if (host && e.composedPath?.().includes(host)) { pauseHover(); return; }
     const t = e.target;
     if (!(t instanceof Element)) return;
+    if (t.closest(PORTALS)) { pauseHover(); return; }
     const p = topPane(t);
     if (locked) {
-      if (p === expanded || (!p && t.closest(PORTALS))) return;
+      if (p === expanded) return;
       locked = false;
       if (expanded) placePane(expanded, bigBox(pin.items.get(expanded).slot, pin.area), 50, true);
       const under = p || (t.closest('.dframe-pane-host') ? expanded : null);
@@ -257,10 +292,10 @@
       return;
     }
     if (!p || listPanes().length < 2) return;
+    if (p !== expanded) { hoverTo(p); return; }
     clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0;
     hoverPane = p;
-    if (p !== expanded) expandPane(p);
-    if (expanded !== p) return;   // could not pin; leave the layout alone
     locked = true;
     placePane(p, bigBox(pin.items.get(p).slot, pin.area), 50, true);
   };
@@ -279,5 +314,7 @@
   function checkExpand() {
     if (!pin) return;
     const panes = listPanes();
-    if (!pin.host.isConnected || panes.length < 2 || panes.some(p => !pin.items.has(p))) resetExpand();
+    if (!pin.host.isConnected || panes.length < 2 || panes.length !== pin.panes.length
+        || panes.some(p => !pin.items.has(p) || p.parentElement !== pin.host)
+        || [...pin.items.keys()].some(c => c.parentElement !== pin.host)) resetExpand();
   }

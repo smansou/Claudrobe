@@ -44,4 +44,11 @@
     ['tokyo-night','Tokyo Night','tokyo-night','#101014','#1a1b26','#a9b1d6','#a9b1d6','#565f89','#7aa2f7','#3b4261'],
     ['tokyo-night-storm','Tokyo Night Storm','tokyo-night','#191d2b','#24283b','#c0caf5','#a9b1d6','#565f89','#7aa2f7','#3b4261'],
     ['vitesse-dark','Vitesse Dark','vitesse-dark','#121212','#121212','#cdc9bd','#858480','#959da5','#4d9375','#191919'],
+    ['ayu-mirage','Ayu Mirage','ayu-mirage','#171b24','#1f2430','#cbccc6','#a6adba','#707a8c','#ffcc66','#404959', { brightness: 50, raised: '#2a3140' }],
+    ['papercolor-dark','PaperColor Dark','','#171717','#262626','#d0d0d0','#bcbcbc','#808080','#5fafaf','#585858', { brightness: 50, raised: '#333333' }],
+    ['gruvbox-dark-hard','Gruvbox Dark Hard','gruvbox-dark-medium','#141617','#1d2021','#ebdbb2','#d5c4a1','#a89984','#b8bb26','#504945', { brightness: 50, raised: '#32302f' }],
+    ['zenburn','Zenburn','','#303030','#3f3f3f','#dcdccc','#c0c0a0','#92927e','#8cd0d3','#656555', { brightness: 50, raised: '#4a4a45' }],
+    ['tomorrow-night','Tomorrow Night','','#17191b','#1d1f21','#c5c8c6','#b4b7b4','#969896','#81a2be','#44484b', { brightness: 50, raised: '#292c2f' }],
+    ['oceanic-next','Oceanic Next','','#141f25','#1b2b34','#d8dee9','#a7adba','#65737e','#6699cc','#405462', { brightness: 50, raised: '#2a3c46' }],
+    ['catppuccin-macchiato','Catppuccin Macchiato','catppuccin-macchiato','#181926','#24273a','#cad3f5','#b8c0e0','#8087a2','#8aadf4','#494d64', { brightness: 50, raised: '#363a4f' }],
   ];

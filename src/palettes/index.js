@@ -9,7 +9,7 @@
 
   const DEFAULT_THEME = { slug: '__default', label: 'Claude (app default)', isDefault: true,
                           base: '#2a2a28', text: '#f5f5f3', muted: '#8d8b85',
-                          accent: '#d97757', border: '#3a3a37' };
+                          accent: '#d97757', border: '#3a3a37', brightness: 50 };
 
   // An optional 11th entry carries per-palette extras the remap honours:
   //   tint     — saturation for remapped chrome, held flat instead of fading
@@ -20,7 +20,8 @@
   //              warnings, diffs, git status), by hue family, in place of
   //              Claude's. See semanticTarget().
   const toTheme = mode => ([slug, label, code, deep, base, text, text2, muted, accent, border, extra]) =>
-    ({ slug, label, code, deep, base, text, text2, muted, accent, border, mode, ...extra });
+    ({ slug, label, code, deep, base, text, text2, muted, accent, border, mode, brightness: 50, ...extra });
+  const paletteBrightness = t => Number.isFinite(t.brightness) ? clamp(t.brightness, 0, 100) : 50;
 
   const THEMES = [DEFAULT_THEME,
     ...RAW.map(toTheme('dark')), ...RAW_LIGHT.map(toTheme('light'))];

@@ -18,6 +18,10 @@
   storedText.v = 3;
   let textOpts = Object.assign(
     { weight: 'default', brightness: 50, font: '', tfont: '', mono: '' }, storedText);
+  const brightnessTheme = `${appMode()}:${current.slug}`;
+  textOpts.brightness = (!storedText.brightnessTheme || storedText.brightnessTheme === brightnessTheme) && Number.isFinite(storedText.brightness)
+    ? clamp(storedText.brightness, 0, 100) : paletteBrightness(current);
+  textOpts.brightnessTheme = brightnessTheme;
   scanned = readJSON(LS_FONTS, null);
   const BORDER_STYLES = ['line', 'glow', 'fill'];
   let borderStyle = BORDER_STYLES.includes(localStorage.getItem(LS_BORDER))

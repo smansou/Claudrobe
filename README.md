@@ -4,11 +4,11 @@ Colour themes and split-view extras for Claude Desktop on macOS.
 
 ## Features
 
-- About 30 dark and light palettes, including Dracula, Nord, Catppuccin and Tokyo Night.
+- 32 dark and 15 light palettes, including Dracula, Nord, Catppuccin, Ayu, PaperColor and Tokyo Night.
 - Customize colours and save your own themes.
-- Adjust text weight, brightness, and separate fonts for the app, transcript and code.
-- Give each Code session its own colour line, glow or tint.
-- Expand split panes on hover, click to keep them expanded, and show session status on pane titles.
+- Adjust text weight, brightness, and separate fonts for the app, transcript and code. Selecting a theme restores its text colours and brightness without changing fonts.
+- Give each Code session its own colour line, glow or tint, plus an optional avatar on its title bar and sidebar tab.
+- Expand split panes after a short hover with a smooth animation; click the expanded pane to lock it. Show session status on pane titles.
 
 No telemetry or network requests from the installer or theme. Claude.app itself is never modified.
 

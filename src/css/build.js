@@ -51,8 +51,12 @@
     // Pin the handful of tokens that define the theme's identity, so surfaces
     // land exactly on the palette rather than on an interpolated approximation.
     const border = effBorder(theme);
+    const deep = effDeep(theme);
     const s2 = effRaised(theme);
-    const s3 = theme.mode === 'light' ? shade(theme.base, 0.09) : ensureContrast(shade(s2, 0.04), theme.base, 1.28);
+    const s3 = effRaised2(theme);
+    const titlebar = theme.titlebar || shade(deep, 0.035);
+    const sidebar = theme.sidebar || deep;
+    const input = theme.input || s3;
     const b = (text.brightness - 50) / 100 * (theme.mode === 'light' ? -1 : 1);
     const fg = b >= 0 ? shade(theme.text, b * 0.9) : shade(theme.text, b * 0.55);
     const muted = ensureContrast(shade(theme.muted, b * 0.5), theme.base, 2.4);
@@ -70,15 +74,15 @@
       primary = shade(primary, theme.mode === 'light' ? -0.06 : 0.06);
     }
     const pinned = {
-      '--cds-surface-0': theme.deep, '--cds-surface-1': theme.base,
+      '--cds-surface-0': deep, '--cds-surface-1': theme.base,
       '--cds-surface-2': s2, '--cds-surface-3': s3,
       '--cds-surface-panel': s2, '--cds-surface-popover': s3,
       '--cds-text-primary': fg,
       '--cds-text-secondary': ensureContrast(shade(theme.text2, b * 0.6), theme.base, 3.2),
       '--cds-text-muted': muted,
       '--cds-border': border,
-      '--cds-border-strong': shade(border, 0.12),
-      '--cds-border-stronger': shade(border, 0.26),
+      '--cds-border-strong': shade(border, toDark ? 0.12 : -0.10),
+      '--cds-border-stronger': shade(border, toDark ? 0.26 : -0.20),
       '--cds-text-accent': theme.accent,
       '--cds-border-accent': `color-mix(in srgb, ${theme.accent} 55%, transparent)`,
       '--cds-bg-accent': `color-mix(in srgb, ${theme.accent} 20%, transparent)`,
@@ -120,6 +124,26 @@
       '--cds-fill-primary': primary,
       '--cds-fill-primary-hover': shade(primary, theme.mode === 'light' ? -0.1 : 0.12),
     };
+    if (!toDark) {
+      Object.assign(pinned, {
+        '--cdt-surface-titlebar': titlebar,
+        '--cdt-surface-input': input,
+      });
+      for (const name of baseline.keys()) {
+        const role = name.match(/^--cds-(?:surface|bg|fill)-(titlebar|sidebar|input)$/)?.[1];
+        if (role) pinned[name] = { titlebar, sidebar, input }[role];
+      }
+    }
+    const sectionCSS = toDark ? '' : `
+.cds-root.cds-root .dframe-pane .epitaxy-titlebar {
+    background-color: var(--cdt-surface-titlebar) !important;
+    border-bottom-color: var(--cds-border) !important;
+}
+.cds-root.cds-root :is(input:not([type]), input[type="text"], input[type="search"],
+    input[type="email"], input[type="url"], input[type="password"], input[type="number"], textarea) {
+    background-color: var(--cdt-surface-input) !important;
+}
+`;
     for (const [k, v] of Object.entries(pinned)) lines.push(`    ${k}: ${v} !important;`);
 
     return `/* claude-theme.js — ${theme.label} */
@@ -127,5 +151,5 @@
 ${lines.join('\n')}
     color-scheme: ${theme.mode};
 }
-${baseCSS(text)}`;
+${sectionCSS}${baseCSS(text)}`;
   }

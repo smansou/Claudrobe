@@ -130,7 +130,8 @@ ${decl(['--cds-font-mono', '--cds-font-mono-ui', '--_prose-font-mono', '--font-m
 /* A fixed slot at the start of each pane's title-bar button group for the
    session-colour dot (drawn by our overlay). Reserving it in layout is what
    keeps the dot off the title and the repo chip at narrow widths. */
-.dframe-pane .epitaxy-titlebar-end { padding-left: 30px !important; }
+.dframe-pane .epitaxy-titlebar-start { min-width: 0; }
+.dframe-pane .epitaxy-titlebar-end { padding-left: 30px !important; flex-shrink: 0; }
 
 /* Session accent, per pane: each .dframe-pane carries its own colour, so a
    split view can show two. The style (line, glow, fill) and its strength are
@@ -198,6 +199,23 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
    This is a shape, not a fade: opacity gradients and border-radius can both
    soften an edge but neither can vary a bar's WIDTH along its length, so the
    outline is an SVG mask filled with the session colour. */
+[data-cdt-avatar] {
+    position: relative;
+    padding-inline-start: calc(var(--cdt-avatar-pad, 12px) + 24px) !important;
+}
+[data-cdt-avatar]::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: var(--cdt-avatar-pad, 12px);
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translateY(-50%);
+    background: var(--cdt-row-accent, currentColor);
+    mask: var(--cdt-avatar-mask) center / contain no-repeat;
+    -webkit-mask: var(--cdt-avatar-mask) center / contain no-repeat;
+    pointer-events: none;
+}
 [data-cdt-row] { position: relative; }
 [data-cdt-row]::before {
     content: "";
