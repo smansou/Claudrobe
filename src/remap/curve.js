@@ -7,17 +7,18 @@
  * ─────────────────────────────────────────────────────────────────────────── */
 
 
-  /** Borders and raised surfaces with a floor on how far they sit from the
-   *  page. Several palettes give a border only ~1.3:1 against their own
-   *  background, and cards drawn 5% lighter than the page; on a dark UI both
-   *  vanish, which is what made cards, menus and the effort control read as
-   *  one flat field. Light palettes already separate and are left alone.
-   *  A custom theme can override either: `raised` directly, and the border
-   *  floor through `borderMin`. */
-  const effBorder = t => t.mode === 'light' ? t.border
-    : ensureContrast(t.border, t.base, t.borderMin || 1.45);
+  /** Contrast floors separate chrome without imposing text-level contrast.
+   *  Light borders use 1.65:1, deep surfaces 1.18:1, raised surfaces 1.10:1.
+   *  Explicit `raised` colours and custom `borderMin` values remain overrides. */
+  const effBorder = t => ensureContrast(t.border, t.base, t.borderMin || (t.mode === 'light' ? 1.65 : 1.45));
+  const effDeep = t => t.mode === 'light' && !t.slug?.startsWith('user:') && t.slug !== '__custom'
+    ? ensureContrast(t.deep, t.base, 1.18) : t.deep;
   const effRaised = t => t.raised
-    || (t.mode === 'light' ? shade(t.base, 0.05) : ensureContrast(shade(t.base, 0.05), t.base, 1.15));
+    || (t.mode === 'light' ? ensureContrast(shade(t.base, -0.055), t.base, 1.10)
+                         : ensureContrast(shade(t.base, 0.05), t.base, 1.15));
+  const effRaised2 = t => t.raised2 || (t.mode === 'light'
+    ? ensureContrast(shade(effRaised(t), -0.035), t.base, 1.16)
+    : ensureContrast(shade(effRaised(t), 0.04), t.base, 1.28));
 
   function makeRemapper(theme, text) {
     const L = h => hex2hsl(h)[2];
@@ -49,8 +50,8 @@
       text2: clamp(L(theme.text2 || theme.text) + b * 0.7, 0, 1),
       muted: clamp(L(theme.muted) + b * 0.5, 0, 1),
       border: L(effBorder(theme)),
-      deep: L(theme.deep), base: L(theme.base), raised: L(raised),
-      raised2: L(theme.mode === 'light' ? shade(theme.base, 0.09) : shade(raised, 0.04)),
+      deep: L(effDeep(theme)), base: L(theme.base), raised: L(raised),
+      raised2: L(theme.raised2 || (theme.mode === 'light' ? effRaised2(theme) : shade(raised, 0.04))),
     };
     const anchors = [
       ['--cds-surface-0', tgt.deep], ['--cds-surface-1', tgt.base],
@@ -66,7 +67,7 @@
       // direction, so two app tokens that happen to cross can never fold the
       // map back on itself.
       anchors.sort((p, q) => p[0] - q[0]);
-      const up = srcDark; // dark source: lighter in, lighter out
+      const up = srcDark === (theme.mode !== 'light');
       const mono = [];
       for (const [x, y] of anchors) {
         const last = mono.at(-1);
@@ -74,8 +75,10 @@
         if (last && (up ? y < last[1] : y > last[1])) continue;
         mono.push([x, y]);
       }
-      const lo = up ? Math.max(tgt.deep - 0.03, 0.01) : clamp(tgt.text + 0.02, 0, 1);
-      const hi = up ? clamp(tgt.text + 0.03, 0, 1) : tgt.raised;
+      const lo = up ? Math.max((theme.mode === 'light' ? tgt.text : tgt.deep) - 0.03, 0.01)
+                    : clamp((theme.mode === 'light' ? tgt.base : tgt.text) + 0.02, 0, 1);
+      const hi = up ? clamp((theme.mode === 'light' ? tgt.base : tgt.text) + 0.03, 0, 1)
+                    : theme.mode === 'light' ? tgt.text : tgt.raised;
       curve = [[0, lo], ...mono.filter(([x]) => x > 0 && x < 1), [1, hi]];
     } else {
       // Fallback for a baseline without the anchors: the original fixed curve.

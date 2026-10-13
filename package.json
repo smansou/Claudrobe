@@ -7,6 +7,10 @@
   "author": "Sobhi Mansour",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "test": "node build.mjs && node --test tests/themes.test.mjs tests/ui.test.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
   }
 }

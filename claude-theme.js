@@ -9,7 +9,7 @@
  * Palettes adapted from cctheme (MIT, https://github.com/Burzu8/cctheme).
  *
  * Toggle panel:  ⌥⇧T  or the colour wheel after the sidebar's back/forward.
- * Session colour: the dot after each pane's title (one per pane in split view).
+ * Session appearance: the personalize icon in each pane's title bar.
  * Remove:        __cdtUninstall()
  * ========================================================================== */
 
@@ -79,6 +79,13 @@
     ['tokyo-night','Tokyo Night','tokyo-night','#101014','#1a1b26','#a9b1d6','#a9b1d6','#565f89','#7aa2f7','#3b4261'],
     ['tokyo-night-storm','Tokyo Night Storm','tokyo-night','#191d2b','#24283b','#c0caf5','#a9b1d6','#565f89','#7aa2f7','#3b4261'],
     ['vitesse-dark','Vitesse Dark','vitesse-dark','#121212','#121212','#cdc9bd','#858480','#959da5','#4d9375','#191919'],
+    ['ayu-mirage','Ayu Mirage','ayu-mirage','#171b24','#1f2430','#cbccc6','#a6adba','#707a8c','#ffcc66','#404959', { brightness: 50, raised: '#2a3140' }],
+    ['papercolor-dark','PaperColor Dark','','#171717','#262626','#d0d0d0','#bcbcbc','#808080','#5fafaf','#585858', { brightness: 50, raised: '#333333' }],
+    ['gruvbox-dark-hard','Gruvbox Dark Hard','gruvbox-dark-medium','#141617','#1d2021','#ebdbb2','#d5c4a1','#a89984','#b8bb26','#504945', { brightness: 50, raised: '#32302f' }],
+    ['zenburn','Zenburn','','#303030','#3f3f3f','#dcdccc','#c0c0a0','#92927e','#8cd0d3','#656555', { brightness: 50, raised: '#4a4a45' }],
+    ['tomorrow-night','Tomorrow Night','','#17191b','#1d1f21','#c5c8c6','#b4b7b4','#969896','#81a2be','#44484b', { brightness: 50, raised: '#292c2f' }],
+    ['oceanic-next','Oceanic Next','','#141f25','#1b2b34','#d8dee9','#a7adba','#65737e','#6699cc','#405462', { brightness: 50, raised: '#2a3c46' }],
+    ['catppuccin-macchiato','Catppuccin Macchiato','catppuccin-macchiato','#181926','#24273a','#cad3f5','#b8c0e0','#8087a2','#8aadf4','#494d64', { brightness: 50, raised: '#363a4f' }],
   ];
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -91,12 +98,19 @@
   const RAW_LIGHT = [
     ['catppuccin-latte','Catppuccin Latte','catppuccin-latte','#dce0e8','#eff1f5','#4c4f69','#5c5f77','#8c8fa1','#1e66f5','#ccd0da'],
     ['github-light','GitHub Light','github-light','#f6f8fa','#ffffff','#1f2328','#656d76','#6e7781','#0969da','#d0d7de'],
-    ['one-light','One Light','one-light','#eaeaeb','#fafafa','#383a42','#696c77','#a0a1a7','#4078f2','#dcdcdc'],
+    ['one-light','Atom One Light','one-light','#eaeaeb','#fafafa','#383a42','#696c77','#a0a1a7','#4078f2','#dcdcdc'],
     ['solarized-light','Solarized Light','solarized-light','#eee8d5','#fdf6e3','#586e75','#657b83','#93a1a1','#268bd2','#d9d2c1'],
     ['gruvbox-light','Gruvbox Light','gruvbox-light-medium','#f2e5bc','#fbf1c7','#3c3836','#504945','#7c6f64','#076678','#ebdbb2'],
     ['rose-pine-dawn','Rosé Pine Dawn','rose-pine-dawn','#f2e9e1','#faf4ed','#575279','#797593','#9893a5','#286983','#dfdad9'],
     ['everforest-light','Everforest Light','everforest-light','#f0eed9','#fdf6e3','#5c6a72','#708089','#829181','#8da101','#e6e2cc'],
     ['vitesse-light','Vitesse Light','vitesse-light','#f0f0ee','#ffffff','#393a34','#6a6a68','#90918c','#1c6b48','#e5e5e3'],
+    ['nord-snow','Nord Snow','','#d8dee9','#eceff4','#2e3440','#434c5e','#5e6779','#427b93','#a5b0c1', { brightness: 50, raised: '#dce1e9' }],
+    ['ayu-light','Ayu Light','ayu-light','#e8e6df','#fafafa','#575f66','#626a73','#747c85','#b86e00','#bdc2c8', { brightness: 50, raised: '#eeeff1' }],
+    ['papercolor-light','PaperColor Light','','#d8d8d0','#eeeeee','#444444','#585858','#707070','#005f87','#a8a8a0', { brightness: 50, raised: '#e2e2de' }],
+    ['tokyo-night-day','Tokyo Night Day','','#c4c9d5','#e1e2e7','#376086','#485e83','#69758c','#34548a','#9aa5bd', { brightness: 50, raised: '#d0d4dc' }],
+    ['night-owl-light','Night Owl Light','','#e3eaf0','#fbfbfb','#403f53','#5c6170','#747b88','#4876c1','#b5c3d0', { brightness: 50, raised: '#e7ebef' }],
+    ['xcode-light','Xcode Light','','#e0e6ee','#ffffff','#262626','#515967','#707b8b','#0063a8','#b0bccb', { brightness: 50, raised: '#f0f3f7' }],
+    ['intellij-light','IntelliJ Light','','#e1e4e8','#f7f8fa','#22252a','#505968','#747c88','#315fbd','#b2b8c2', { brightness: 50, raised: '#e5e8ed' }],
   ];
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -110,7 +124,7 @@
 
   const DEFAULT_THEME = { slug: '__default', label: 'Claude (app default)', isDefault: true,
                           base: '#2a2a28', text: '#f5f5f3', muted: '#8d8b85',
-                          accent: '#d97757', border: '#3a3a37' };
+                          accent: '#d97757', border: '#3a3a37', brightness: 50 };
 
   // An optional 11th entry carries per-palette extras the remap honours:
   //   tint     — saturation for remapped chrome, held flat instead of fading
@@ -121,7 +135,8 @@
   //              warnings, diffs, git status), by hue family, in place of
   //              Claude's. See semanticTarget().
   const toTheme = mode => ([slug, label, code, deep, base, text, text2, muted, accent, border, extra]) =>
-    ({ slug, label, code, deep, base, text, text2, muted, accent, border, mode, ...extra });
+    ({ slug, label, code, deep, base, text, text2, muted, accent, border, mode, brightness: 50, ...extra });
+  const paletteBrightness = t => Number.isFinite(t.brightness) ? clamp(t.brightness, 0, 100) : 50;
 
   const THEMES = [DEFAULT_THEME,
     ...RAW.map(toTheme('dark')), ...RAW_LIGHT.map(toTheme('light'))];
@@ -324,17 +339,18 @@
  * ─────────────────────────────────────────────────────────────────────────── */
 
 
-  /** Borders and raised surfaces with a floor on how far they sit from the
-   *  page. Several palettes give a border only ~1.3:1 against their own
-   *  background, and cards drawn 5% lighter than the page; on a dark UI both
-   *  vanish, which is what made cards, menus and the effort control read as
-   *  one flat field. Light palettes already separate and are left alone.
-   *  A custom theme can override either: `raised` directly, and the border
-   *  floor through `borderMin`. */
-  const effBorder = t => t.mode === 'light' ? t.border
-    : ensureContrast(t.border, t.base, t.borderMin || 1.45);
+  /** Contrast floors separate chrome without imposing text-level contrast.
+   *  Light borders use 1.65:1, deep surfaces 1.18:1, raised surfaces 1.10:1.
+   *  Explicit `raised` colours and custom `borderMin` values remain overrides. */
+  const effBorder = t => ensureContrast(t.border, t.base, t.borderMin || (t.mode === 'light' ? 1.65 : 1.45));
+  const effDeep = t => t.mode === 'light' && !t.slug?.startsWith('user:') && t.slug !== '__custom'
+    ? ensureContrast(t.deep, t.base, 1.18) : t.deep;
   const effRaised = t => t.raised
-    || (t.mode === 'light' ? shade(t.base, 0.05) : ensureContrast(shade(t.base, 0.05), t.base, 1.15));
+    || (t.mode === 'light' ? ensureContrast(shade(t.base, -0.055), t.base, 1.10)
+                         : ensureContrast(shade(t.base, 0.05), t.base, 1.15));
+  const effRaised2 = t => t.raised2 || (t.mode === 'light'
+    ? ensureContrast(shade(effRaised(t), -0.035), t.base, 1.16)
+    : ensureContrast(shade(effRaised(t), 0.04), t.base, 1.28));
 
   function makeRemapper(theme, text) {
     const L = h => hex2hsl(h)[2];
@@ -366,8 +382,8 @@
       text2: clamp(L(theme.text2 || theme.text) + b * 0.7, 0, 1),
       muted: clamp(L(theme.muted) + b * 0.5, 0, 1),
       border: L(effBorder(theme)),
-      deep: L(theme.deep), base: L(theme.base), raised: L(raised),
-      raised2: L(theme.mode === 'light' ? shade(theme.base, 0.09) : shade(raised, 0.04)),
+      deep: L(effDeep(theme)), base: L(theme.base), raised: L(raised),
+      raised2: L(theme.raised2 || (theme.mode === 'light' ? effRaised2(theme) : shade(raised, 0.04))),
     };
     const anchors = [
       ['--cds-surface-0', tgt.deep], ['--cds-surface-1', tgt.base],
@@ -383,7 +399,7 @@
       // direction, so two app tokens that happen to cross can never fold the
       // map back on itself.
       anchors.sort((p, q) => p[0] - q[0]);
-      const up = srcDark; // dark source: lighter in, lighter out
+      const up = srcDark === (theme.mode !== 'light');
       const mono = [];
       for (const [x, y] of anchors) {
         const last = mono.at(-1);
@@ -391,8 +407,10 @@
         if (last && (up ? y < last[1] : y > last[1])) continue;
         mono.push([x, y]);
       }
-      const lo = up ? Math.max(tgt.deep - 0.03, 0.01) : clamp(tgt.text + 0.02, 0, 1);
-      const hi = up ? clamp(tgt.text + 0.03, 0, 1) : tgt.raised;
+      const lo = up ? Math.max((theme.mode === 'light' ? tgt.text : tgt.deep) - 0.03, 0.01)
+                    : clamp((theme.mode === 'light' ? tgt.base : tgt.text) + 0.02, 0, 1);
+      const hi = up ? clamp((theme.mode === 'light' ? tgt.base : tgt.text) + 0.03, 0, 1)
+                    : theme.mode === 'light' ? tgt.text : tgt.raised;
       curve = [[0, lo], ...mono.filter(([x]) => x > 0 && x < 1), [1, hi]];
     } else {
       // Fallback for a baseline without the anchors: the original fixed curve.
@@ -792,8 +810,12 @@
     // Pin the handful of tokens that define the theme's identity, so surfaces
     // land exactly on the palette rather than on an interpolated approximation.
     const border = effBorder(theme);
+    const deep = effDeep(theme);
     const s2 = effRaised(theme);
-    const s3 = theme.mode === 'light' ? shade(theme.base, 0.09) : ensureContrast(shade(s2, 0.04), theme.base, 1.28);
+    const s3 = effRaised2(theme);
+    const titlebar = theme.titlebar || shade(deep, 0.035);
+    const sidebar = theme.sidebar || deep;
+    const input = theme.input || s3;
     const b = (text.brightness - 50) / 100 * (theme.mode === 'light' ? -1 : 1);
     const fg = b >= 0 ? shade(theme.text, b * 0.9) : shade(theme.text, b * 0.55);
     const muted = ensureContrast(shade(theme.muted, b * 0.5), theme.base, 2.4);
@@ -811,15 +833,15 @@
       primary = shade(primary, theme.mode === 'light' ? -0.06 : 0.06);
     }
     const pinned = {
-      '--cds-surface-0': theme.deep, '--cds-surface-1': theme.base,
+      '--cds-surface-0': deep, '--cds-surface-1': theme.base,
       '--cds-surface-2': s2, '--cds-surface-3': s3,
       '--cds-surface-panel': s2, '--cds-surface-popover': s3,
       '--cds-text-primary': fg,
       '--cds-text-secondary': ensureContrast(shade(theme.text2, b * 0.6), theme.base, 3.2),
       '--cds-text-muted': muted,
       '--cds-border': border,
-      '--cds-border-strong': shade(border, 0.12),
-      '--cds-border-stronger': shade(border, 0.26),
+      '--cds-border-strong': shade(border, toDark ? 0.12 : -0.10),
+      '--cds-border-stronger': shade(border, toDark ? 0.26 : -0.20),
       '--cds-text-accent': theme.accent,
       '--cds-border-accent': `color-mix(in srgb, ${theme.accent} 55%, transparent)`,
       '--cds-bg-accent': `color-mix(in srgb, ${theme.accent} 20%, transparent)`,
@@ -861,6 +883,26 @@
       '--cds-fill-primary': primary,
       '--cds-fill-primary-hover': shade(primary, theme.mode === 'light' ? -0.1 : 0.12),
     };
+    if (!toDark) {
+      Object.assign(pinned, {
+        '--cdt-surface-titlebar': titlebar,
+        '--cdt-surface-input': input,
+      });
+      for (const name of baseline.keys()) {
+        const role = name.match(/^--cds-(?:surface|bg|fill)-(titlebar|sidebar|input)$/)?.[1];
+        if (role) pinned[name] = { titlebar, sidebar, input }[role];
+      }
+    }
+    const sectionCSS = toDark ? '' : `
+.cds-root.cds-root .dframe-pane .epitaxy-titlebar {
+    background-color: var(--cdt-surface-titlebar) !important;
+    border-bottom-color: var(--cds-border) !important;
+}
+.cds-root.cds-root :is(input:not([type]), input[type="text"], input[type="search"],
+    input[type="email"], input[type="url"], input[type="password"], input[type="number"], textarea) {
+    background-color: var(--cdt-surface-input) !important;
+}
+`;
     for (const [k, v] of Object.entries(pinned)) lines.push(`    ${k}: ${v} !important;`);
 
     return `/* claude-theme.js — ${theme.label} */
@@ -868,7 +910,7 @@
 ${lines.join('\n')}
     color-scheme: ${theme.mode};
 }
-${baseCSS(text)}`;
+${sectionCSS}${baseCSS(text)}`;
   }
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -1003,7 +1045,8 @@ ${decl(['--cds-font-mono', '--cds-font-mono-ui', '--_prose-font-mono', '--font-m
 /* A fixed slot at the start of each pane's title-bar button group for the
    session-colour dot (drawn by our overlay). Reserving it in layout is what
    keeps the dot off the title and the repo chip at narrow widths. */
-.dframe-pane .epitaxy-titlebar-end { padding-left: 30px !important; }
+.dframe-pane .epitaxy-titlebar-start { min-width: 0; }
+.dframe-pane .epitaxy-titlebar-end { padding-left: 30px !important; flex-shrink: 0; }
 
 /* Session accent, per pane: each .dframe-pane carries its own colour, so a
    split view can show two. The style (line, glow, fill) and its strength are
@@ -1071,6 +1114,23 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
    This is a shape, not a fade: opacity gradients and border-radius can both
    soften an edge but neither can vary a bar's WIDTH along its length, so the
    outline is an SVG mask filled with the session colour. */
+[data-cdt-avatar] {
+    position: relative;
+    padding-inline-start: calc(var(--cdt-avatar-pad, 12px) + 24px) !important;
+}
+[data-cdt-avatar]::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: var(--cdt-avatar-pad, 12px);
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translateY(-50%);
+    background: var(--cdt-row-accent, currentColor);
+    mask: var(--cdt-avatar-mask) center / contain no-repeat;
+    -webkit-mask: var(--cdt-avatar-mask) center / contain no-repeat;
+    pointer-events: none;
+}
 [data-cdt-row] { position: relative; }
 [data-cdt-row]::before {
     content: "";
@@ -1162,6 +1222,10 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   storedText.v = 3;
   let textOpts = Object.assign(
     { weight: 'default', brightness: 50, font: '', tfont: '', mono: '' }, storedText);
+  const brightnessTheme = `${appMode()}:${current.slug}`;
+  textOpts.brightness = (!storedText.brightnessTheme || storedText.brightnessTheme === brightnessTheme) && Number.isFinite(storedText.brightness)
+    ? clamp(storedText.brightness, 0, 100) : paletteBrightness(current);
+  textOpts.brightnessTheme = brightnessTheme;
   scanned = readJSON(LS_FONTS, null);
   const BORDER_STYLES = ['line', 'glow', 'fill'];
   let borderStyle = BORDER_STYLES.includes(localStorage.getItem(LS_BORDER))
@@ -1260,7 +1324,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   const paneIds = new WeakMap(); // pane -> { id, at }
   function paneSessionId(pane, panes) {
     const c = paneIds.get(pane);
-    if (c && Date.now() - c.at < 1500) return c.id;
+    if (c && Date.now() - c.at < 48) return c.id;
     let id = null;
     try { id = fiberSession(pane); } catch {}
     if (!id) {
@@ -1281,6 +1345,11 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     html.style.setProperty('--cdt-border-w', String(borderWidth));
     html.style.setProperty('--cdt-fill', String(fillPct()));
     const panes = listPanes();
+    paintPaneAccents(panes);
+    paintRows();
+    paintStatus(panes);
+  }
+  function paintPaneAccents(panes = listPanes()) {
     for (const p of panes) {
       const color = colorForSession(paneSessionId(p, panes));
       if (color) {
@@ -1290,8 +1359,6 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
         p.style.removeProperty(VAR); p.removeAttribute('data-cdt-accent');
       }
     }
-    paintRows();
-    paintStatus(panes);
   }
   const clearPanes = () => {
     for (const p of document.querySelectorAll('[data-cdt-accent]')) {
@@ -1299,6 +1366,32 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     }
     clearStatus();
   };
+
+  const SESSION_ICONS = [
+    ['fox', 'Fox', '<path d="m4 11-1-8 7 5h4l7-5-1 8v5l-8 6-8-6Z"/><path d="m7 13 2 1m8-1-2 1m-5 3 2 2 2-2"/>'],
+    ['cat', 'Cat', '<path d="M4 11V3l6 4h4l6-4v8c3 9-19 9-16 0Z"/><path d="M8 12h.1M16 12h.1m-6 3 2 2 2-2M3 15H1m22 0h-2"/>'],
+    ['owl', 'Owl', '<path d="m4 5 4 2h8l4-2v10c0 9-16 9-16 0Z"/><circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/><path d="m10 17 2 2 2-2"/>'],
+    ['robot', 'Robot', '<rect x="4" y="7" width="16" height="14" rx="4"/><path d="M12 3v4M1 12v5m22-5v5M8 16h8"/><circle cx="8" cy="12" r="1"/><circle cx="16" cy="12" r="1"/>'],
+    ['astronaut', 'Astronaut', '<circle cx="12" cy="12" r="10"/><rect x="5" y="6" width="14" height="10" rx="4"/><path d="M8 19h8M8 10h2"/>'],
+    ['rocket', 'Rocket', '<path d="M9 15C7 9 13 3 21 3c0 8-6 14-12 12Zm0 0-5 1 1-5 4-2m6 6-2 4-5 1 1-5M6 18l-3 3"/><circle cx="16" cy="8" r="2"/>'],
+    ['sprout', 'Sprout', '<path d="M12 21V11C5 12 3 8 3 3c6 0 9 2 9 8Zm0 4c0-6 3-9 9-9 0 6-3 9-9 9Z"/>'],
+    ['mountain', 'Mountain', '<path d="m2 21 8-17 6 11 2-4 4 10Zm5-11 3 2 3-2"/>'],
+  ];
+  const PERSONALIZE_ICON = '<rect x="3" y="3" width="18" height="18" rx="5"/><path d="m8 15 1-4 7-7 3 3-7 7-4 1Zm6-9 3 3"/>';
+  const iconEntry = id => SESSION_ICONS.find(([key]) => key === id);
+  const iconSVG = id => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${iconEntry(id)?.[2] || PERSONALIZE_ICON}</svg>`;
+  const iconMask = id => `url("data:image/svg+xml,${encodeURIComponent(iconSVG(id))}")`;
+  const LS_AVATARS = 'cdt:sessionIcons';
+  const storedIcons = readJSON(LS_AVATARS, {});
+  const sessionIcons = Object.fromEntries(Object.entries(storedIcons && typeof storedIcons === 'object' ? storedIcons : {})
+    .filter(([id, icon]) => SID.test(id) && iconEntry(icon)));
+  const iconForSession = id => iconEntry(sessionIcons[id]) ? sessionIcons[id] : null;
+  function setSessionIcon(id, icon) {
+    if (!id || !SID.test(id) || (icon && !iconEntry(icon))) return;
+    if (icon) sessionIcons[id] = icon; else delete sessionIcons[id];
+    writeJSON(LS_AVATARS, sessionIcons);
+    paintRows();
+  }
 
 /* ───────────────────────────────────────────────────────────────────────────
  * status.js — Mirror each pane's status light onto its title.
@@ -1456,23 +1549,23 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   // A strip of each covered pane stays showing, so the pointer can move onto
   // a neighbour.
   //
-  // Clicking a pane locks it large: hovering elsewhere no longer moves
+  // Clicking an expanded pane locks it large: hovering elsewhere no longer moves
   // anything until a click lands outside it, which releases the lock and
   // lets the pane under the pointer take over as if it had just been hovered.
   // Menus the pane opens (portalled outside it) and our own controls count
   // as inside, so using them does not release the lock.
 
-  const EXPAND_MS = 280, HOVER_DELAY = 280, LEAVE_DELAY = 160, PEEK = 64;
+  const EXPAND_MS = 420, HOVER_DELAY = 550, LEAVE_DELAY = 160, PEEK = 64;
   const PIN_PROPS = ['position', 'left', 'top', 'right', 'bottom', 'width', 'height', 'margin',
                      'min-width', 'min-height', 'max-width', 'max-height', 'z-index', 'transition',
-                     'box-shadow', 'background-color', 'filter',
+                     'box-shadow', 'background-color', 'filter', 'opacity', 'isolation', 'mix-blend-mode',
                      'grid-row-start', 'grid-row-end', 'grid-column-start', 'grid-column-end'];
   const PORTALS = '[data-radix-popper-content-wrapper], [role="menu"], [role="dialog"], [role="listbox"], [role="tooltip"]';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-  let pin = null;        // { host, items: Map(el -> { saved, slot }), area, ro }
+  let pin = null;        // { host, items: Map(el -> { saved, slot }), panes, area, ro }
   let expanded = null;   // the pane that is (or is growing) large
-  let hoverPane = null, hoverTimer = 0, leaveTimer = 0, settleTimer = 0, followUntil = 0;
+  let hoverPane = null, hoverPoint = null, hoverTimer = 0, leaveTimer = 0, settleTimer = 0, followUntil = 0, followRaf = 0;
   let locked = false;    // the expanded pane was clicked and stays large
 
   const topPane = el => {
@@ -1485,11 +1578,14 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   /** The colour behind the panes: they are transparent in the app and would
    *  otherwise show their neighbours through them once overlapping. */
   function backdropOf(el) {
-    for (let x = el; x && x !== document.documentElement; x = x.parentElement) {
+    for (let x = el; x; x = x.parentElement) {
       const c = getComputedStyle(x).backgroundColor;
-      if (solid(c)) return c;
+      if (!c || c === 'transparent') continue;
+      const alpha = c.includes('/') ? c.slice(c.lastIndexOf('/') + 1, -1).trim()
+        : /^(rgba|hsla)\(/.test(c) ? c.slice(c.lastIndexOf(',') + 1, -1).trim() : null;
+      if (alpha === null || parseFloat(alpha) === (alpha.endsWith('%') ? 100 : 1)) return c;
     }
-    return getComputedStyle(document.body).backgroundColor;
+    return uiPalette().base;
   }
 
   function pinAll() {
@@ -1515,7 +1611,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     const area = { left: Math.min(...slots.map(s => s.left)), top: Math.min(...slots.map(s => s.top)),
                    right: Math.max(...slots.map(s => s.left + s.width)),
                    bottom: Math.max(...slots.map(s => s.top + s.height)) };
-    const bg = backdropOf(host);
+    const backgrounds = new Map(panes.map(p => [p, backdropOf(p)]));
     for (const [c, { slot }] of items) {
       const st = c.style;
       st.setProperty('position', 'absolute', 'important');
@@ -1528,7 +1624,11 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
       for (const n of ['min-width', 'min-height']) st.setProperty(n, '0', 'important');
       for (const n of ['max-width', 'max-height']) st.setProperty(n, 'none', 'important');
       for (const n of ['grid-row-start', 'grid-row-end', 'grid-column-start', 'grid-column-end']) st.setProperty(n, 'auto', 'important');
-      if (panes.includes(c) && !solid(getComputedStyle(c).backgroundColor)) st.setProperty('background-color', bg, 'important');
+      if (backgrounds.has(c)) {
+        st.setProperty('background-color', backgrounds.get(c), 'important');
+        st.setProperty('isolation', 'isolate', 'important');
+        st.setProperty('z-index', '0', 'important');
+      }
     }
     // Nothing should have moved. If the host itself resized (its size came
     // from its children after all), undo and leave the layout alone.
@@ -1538,16 +1638,19 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     }
     void host.offsetWidth; // commit the pinned boxes before transitions apply
     const ms = reduceMotion.matches ? 0 : EXPAND_MS;
-    const ease = 'cubic-bezier(.2,.8,.2,1)';
+    const ease = 'cubic-bezier(.4,0,.2,1)';
     for (const c of items.keys()) {
       c.style.setProperty('transition',
         ['left', 'top', 'width', 'height', 'box-shadow'].map(n => `${n} ${ms}ms ${ease}`).join(', '), 'important');
     }
     // A sidebar opening or closing resizes the host without a window resize.
-    let first = true;
-    const ro = new ResizeObserver(() => { if (first) { first = false; return; } resetExpand(); });
+    const ro = new ResizeObserver(() => {
+      if (pin?.ro !== ro) return;
+      const r = host.getBoundingClientRect();
+      if (Math.abs(r.width - hb.width) > 1 || Math.abs(r.height - hb.height) > 1) resetExpand();
+    });
     ro.observe(host);
-    return { host, items, area, ro };
+    return { host, items, panes, area, ro };
   }
 
   function restorePins(items) {
@@ -1573,7 +1676,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     st.setProperty('top', `${box.top}px`, 'important');
     st.setProperty('width', `${box.width}px`, 'important');
     st.setProperty('height', `${box.height}px`, 'important');
-    z ? st.setProperty('z-index', String(z), 'important') : st.removeProperty('z-index');
+    st.setProperty('z-index', String(z), 'important');
     // The app dims unfocused panes with filter: opacity(), which would let
     // the covered panes show through a grown one.
     // A locked pane swaps the hairline for an accent ring, so the lock shows.
@@ -1581,25 +1684,32 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
       st.setProperty('box-shadow', '0 14px 48px -10px rgba(0,0,0,.55), ' + (locked
         ? '0 0 0 2px var(--cds-fill-accent, #d97757)' : '0 0 0 1px rgba(127,127,127,.18)'), 'important');
       st.setProperty('filter', 'none', 'important');
+      st.setProperty('opacity', '1', 'important');
+      st.setProperty('mix-blend-mode', 'normal', 'important');
     } else {
-      st.removeProperty('box-shadow');
-      if (z !== 49) st.removeProperty('filter');
+      for (const [n, v, pr] of pin.items.get(c).saved) {
+        if (n !== 'box-shadow' && !(z !== 49 && ['filter', 'opacity', 'mix-blend-mode'].includes(n))) continue;
+        v ? st.setProperty(n, v, pr) : st.removeProperty(n);
+      }
     }
   }
 
   /** Our dots and the trigger follow the panes frame by frame while they move. */
   function follow() {
-    followUntil = performance.now() + EXPAND_MS + 80;
+    followUntil = performance.now() + (reduceMotion.matches ? 0 : EXPAND_MS + 80);
+    if (followRaf) return;
     const tick = () => {
+      followRaf = 0;
+      if (!pin) return;
       syncPanes(); positionOverlay();
-      if (performance.now() < followUntil) requestAnimationFrame(tick);
+      if (pin && performance.now() < followUntil) followRaf = requestAnimationFrame(tick);
     };
-    requestAnimationFrame(tick);
+    followRaf = requestAnimationFrame(tick);
   }
 
   function expandPane(p) {
     if (expandMode === 'off' || p === expanded) return;
-    clearTimeout(settleTimer);
+    clearTimeout(settleTimer); settleTimer = 0;
     if (!pin) pin = pinAll();
     if (!pin || !pin.items.has(p)) { resetExpand(); return; }
     const prev = expanded;
@@ -1619,21 +1729,24 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     expanded = null;
     follow();
     clearTimeout(settleTimer);
-    settleTimer = setTimeout(() => { if (!expanded) unpin(); }, (reduceMotion.matches ? 0 : EXPAND_MS) + 60);
+    settleTimer = setTimeout(() => { settleTimer = 0; if (!expanded) unpin(); }, (reduceMotion.matches ? 0 : EXPAND_MS) + 60);
   }
 
   function unpin() {
+    if (followRaf) cancelAnimationFrame(followRaf);
+    followRaf = 0; followUntil = 0;
     if (!pin) return;
     pin.ro.disconnect();
     restorePins(pin.items);
     pin = null;
-    requestAnimationFrame(() => { syncPanes(); positionOverlay(); });
+    syncPanes(); positionOverlay();
   }
 
   /** Straight back to the app's layout, no animation. */
   function resetExpand() {
     clearTimeout(hoverTimer); clearTimeout(leaveTimer); clearTimeout(settleTimer);
-    expanded = null; hoverPane = null; locked = false;
+    hoverTimer = 0; leaveTimer = 0; settleTimer = 0;
+    expanded = null; hoverPane = null; hoverPoint = null; locked = false;
     unpin();
   }
 
@@ -1642,39 +1755,54 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     hoverPane = p;
     if (locked) return;   // remembered, acted on when the lock is released
     clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0;
     if (p && p === expanded) return;
-    if (!p) { leaveTimer = setTimeout(collapsePane, LEAVE_DELAY); return; }
+    if (!p) { leaveTimer = setTimeout(() => { leaveTimer = 0; collapsePane(); }, LEAVE_DELAY); return; }
     hoverTimer = setTimeout(() => {
-      if (hoverPane !== p) return;
-      if (listPanes().length < 2) { resetExpand(); return; }
+      hoverTimer = 0;
+      if (locked || hoverPane !== p || expandMode === 'off') return;
+      if (hoverPoint) {
+        const hit = document.elementFromPoint(hoverPoint.x, hoverPoint.y);
+        if (hit === host || hit?.closest(PORTALS) || topPane(hit) !== p) { pauseHover(); return; }
+      }
+      const panes = listPanes();
+      if (panes.length < 2 || !panes.includes(p)) { resetExpand(); return; }
       expandPane(p);
-    }, expanded ? Math.round(HOVER_DELAY * 0.6) : HOVER_DELAY);
+    }, HOVER_DELAY);
+  }
+
+  function pauseHover() {
+    clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0; hoverPane = undefined;
   }
 
   const onPointerMove = e => {
     if (expandMode === 'off') return;
-    if (host && e.composedPath?.().includes(host)) return;   // our own controls
+    hoverPoint = { x: e.clientX, y: e.clientY };
+    if (host && e.composedPath?.().includes(host)) { pauseHover(); return; }   // our own controls
     const t = e.target;
     if (!(t instanceof Element)) return;
+    if (t.closest(PORTALS)) { pauseHover(); return; }
     const p = topPane(t);
     if (p) return hoverTo(p);
     if (t.closest('.dframe-pane-host')) return;             // a divider between panes
-    if (t.closest(PORTALS)) return;                         // a menu opened from the pane
     hoverTo(null);
   };
   const onPointerLeaveDoc = () => { if (expandMode !== 'off') hoverTo(null); };
 
   /** Capture phase, so it sees the press before the app can stop it. A press
-   *  on a pane locks it — growing it first if the hover delay has not run out
-   *  yet; a press outside the locked pane releases it. */
+   *  on an expanded pane locks it; a press outside the locked pane releases it.
+   *  Other panes still wait for the hover delay. */
   const onPointerDown = e => {
     if (expandMode === 'off' || e.button !== 0) return;
-    if (host && e.composedPath?.().includes(host)) return;
+    hoverPoint = { x: e.clientX, y: e.clientY };
+    if (host && e.composedPath?.().includes(host)) { pauseHover(); return; }
     const t = e.target;
     if (!(t instanceof Element)) return;
+    if (t.closest(PORTALS)) { pauseHover(); return; }
     const p = topPane(t);
     if (locked) {
-      if (p === expanded || (!p && t.closest(PORTALS))) return;
+      if (p === expanded) return;
       locked = false;
       if (expanded) placePane(expanded, bigBox(pin.items.get(expanded).slot, pin.area), 50, true);
       const under = p || (t.closest('.dframe-pane-host') ? expanded : null);
@@ -1683,10 +1811,10 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
       return;
     }
     if (!p || listPanes().length < 2) return;
+    if (p !== expanded) { hoverTo(p); return; }
     clearTimeout(hoverTimer); clearTimeout(leaveTimer);
+    hoverTimer = 0; leaveTimer = 0;
     hoverPane = p;
-    if (p !== expanded) expandPane(p);
-    if (expanded !== p) return;   // could not pin; leave the layout alone
     locked = true;
     placePane(p, bigBox(pin.items.get(p).slot, pin.area), 50, true);
   };
@@ -1705,7 +1833,9 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   function checkExpand() {
     if (!pin) return;
     const panes = listPanes();
-    if (!pin.host.isConnected || panes.length < 2 || panes.some(p => !pin.items.has(p))) resetExpand();
+    if (!pin.host.isConnected || panes.length < 2 || panes.length !== pin.panes.length
+        || panes.some(p => !pin.items.has(p) || p.parentElement !== pin.host)
+        || [...pin.items.keys()].some(c => c.parentElement !== pin.host)) resetExpand();
   }
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -1765,30 +1895,52 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   function rowsFor(id) {
     if (!rowAttr) return [];
     try {
-      return [...document.querySelectorAll(`[${rowAttr}*="${CSS.escape(id)}"]`)];
+      return [...document.querySelectorAll(`[${rowAttr}*="${CSS.escape(id)}"]`)]
+        .filter(el => !el.closest(PANE_SEL) && !el.closest(`#${HOST_ID}`));
     } catch { return []; }
   }
 
   function paintRows() {
-    const ids = Object.keys(sessionMap).filter(k => sessionMap[k]);
+    const ids = [...new Set([...Object.keys(sessionMap).filter(k => sessionMap[k]), ...Object.keys(sessionIcons)])];
     discoverRowAttr(ids);
 
     const want = new Map();
     for (const id of ids) {
       for (const el of rowsFor(id)) {
-        if (rowSized(el.getBoundingClientRect())) want.set(el, sessionMap[id]);
+        if (rowSized(el.getBoundingClientRect())) want.set(el, { color: colorForSession(id), icon: iconForSession(id) });
       }
     }
     for (const el of document.querySelectorAll('[data-cdt-row]')) {
-      if (!want.has(el)) { el.removeAttribute('data-cdt-row'); el.style.removeProperty('--cdt-row-accent'); }
+      if (!want.has(el) || !want.get(el).color) { el.removeAttribute('data-cdt-row'); el.style.removeProperty('--cdt-row-accent'); }
     }
-    for (const [el, color] of want) {
-      el.setAttribute('data-cdt-row', '');
-      el.style.setProperty('--cdt-row-accent', color);
+    for (const el of document.querySelectorAll('[data-cdt-avatar]')) {
+      if (!want.get(el)?.icon) {
+        el.removeAttribute('data-cdt-avatar');
+        el.style.removeProperty('--cdt-avatar-mask');
+        el.style.removeProperty('--cdt-avatar-pad');
+      }
+    }
+    for (const [el, { color, icon }] of want) {
+      if (color) {
+        el.setAttribute('data-cdt-row', '');
+        el.style.setProperty('--cdt-row-accent', color);
+      }
+      if (icon) {
+        if (!el.hasAttribute('data-cdt-avatar')) {
+          el.style.setProperty('--cdt-avatar-pad', getComputedStyle(el).paddingInlineStart);
+        }
+        el.setAttribute('data-cdt-avatar', icon);
+        el.style.setProperty('--cdt-avatar-mask', iconMask(icon));
+      }
     }
   }
 
   const clearRows = () => {
+    for (const a of document.querySelectorAll('[data-cdt-avatar]')) {
+      a.removeAttribute('data-cdt-avatar');
+      a.style.removeProperty('--cdt-avatar-mask');
+      a.style.removeProperty('--cdt-avatar-pad');
+    }
     for (const a of document.querySelectorAll('[data-cdt-row]')) {
       a.removeAttribute('data-cdt-row');
       a.style.removeProperty('--cdt-row-accent');
@@ -1803,6 +1955,9 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
 
   function applyTheme(theme) {
     current = theme;
+    textOpts.brightness = paletteBrightness(theme);
+    textOpts.brightnessTheme = `${appMode()}:${theme.slug}`;
+    writeJSON(LS_TEXT, textOpts);
     localStorage.setItem(themeKey(), theme.slug);
     applyStyle();
     paintAccent();
@@ -1875,7 +2030,9 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     if (!bar || !end) return { x: 0, y: 0, ok: false };
     const bb = bar.getBoundingClientRect(), eb = end.getBoundingClientRect();
     if (!bb.width || !eb.width) return { x: 0, y: 0, ok: false };
-    return { x: eb.left + DOT_SLOT / 2, y: bb.top + bb.height / 2, ok: true };
+    const pb = p.getBoundingClientRect();
+    const x = eb.left + DOT_SLOT / 2, y = bb.top + bb.height / 2;
+    return { x, y, ok: x >= pb.left + 12 && x <= pb.right - 12 && y >= pb.top && y <= pb.bottom };
   }
 
   /** The last of the sidebar's top-bar buttons (back / forward / search). A
@@ -1884,13 +2041,16 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   let navEl = null;
   function findNav() {
     let r = navEl?.isConnected ? navEl.getBoundingClientRect() : null;
-    if (!r || !r.width) {
+    if (!r || !r.width || !r.height || r.right <= 0 || r.left >= innerWidth || r.top < 0
+        || getComputedStyle(navEl).visibility === 'hidden') {
       const cands = [...document.querySelectorAll('button[aria-label], a[aria-label], [role="button"][aria-label]')]
         .filter(b => { const x = b.getBoundingClientRect();
-          return x.width && x.width <= 48 && x.top < 120 && x.left < 700 && notOurs(b); });
+          return x.width && x.height && x.width <= 48 && x.top >= 0 && x.top < 120
+            && x.left >= 0 && x.left < Math.min(700, innerWidth) && !b.closest(PANE_SEL)
+            && getComputedStyle(b).visibility !== 'hidden' && notOurs(b); });
       const by = re => cands.filter(b => re.test(b.getAttribute('aria-label')))
         .sort((a, b) => b.getBoundingClientRect().right - a.getBoundingClientRect().right)[0];
-      navEl = by(/^forward$|forward/i) || by(/^back$|\bback\b/i) || by(/search/i) || null;
+      navEl = by(/^forward$|forward/i) || by(/^back$|\bback\b/i) || by(/sidebar|navigation/i) || null;
       r = navEl ? navEl.getBoundingClientRect() : null;
     }
     return r && r.width ? r : null;
@@ -1905,18 +2065,38 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
       const a = titleAnchor(p);
       info.x = a.x; info.y = a.y;
       // Covered by a modal (Settings) → hide, or it would float over it.
-      const hit = document.elementsFromPoint(Math.round(r.left + r.width / 2),
-        Math.round(r.top + Math.min(r.height / 2, 160))).find(notOurs);
+      const hit = document.elementsFromPoint(Math.round(a.x), Math.round(a.y)).find(notOurs);
       info.visible = a.ok && !!info.id && !!hit && (hit === p || p.contains(hit));
       return info;
     });
     navRect = findNav();
   }
 
+  function syncPaneIdentity(panes = listPanes()) {
+    if (panes.length !== paneInfo.length || panes.some((p, i) => paneInfo[i].el !== p)) {
+      syncPanes();
+      return;
+    }
+    for (const info of paneInfo) info.id = paneSessionId(info.el, panes);
+  }
+
+  function freshSessionTarget() {
+    const p = paneInfo[accentOpen];
+    const panes = listPanes();
+    if (!p || !panes.includes(p.el)) return null;
+    forgetPaneIds();
+    p.id = paneSessionId(p.el, panes);
+    return p.id;
+  }
+
   const TRIG = 26, PANEL_W = 284, DOTS_W = 232, DOT_SLOT = 30;
   function triggerPos() {
-    if (navRect) return { left: Math.round(navRect.right + 4),
-                          top: Math.round(navRect.top + navRect.height / 2 - TRIG / 2), docked: true };
+    if (navRect) {
+      const left = Math.round(navRect.right + 4), top = Math.round(navRect.top + navRect.height / 2 - TRIG / 2);
+      const hits = document.elementsFromPoint(left + TRIG / 2, top + TRIG / 2).filter(notOurs);
+      const blocked = hits.some(el => el.closest?.(`${PANE_SEL}, button, a, input, [role="button"]`));
+      if (!blocked && left + TRIG < innerWidth - 8 && top >= 8) return { left, top, docked: true };
+    }
     return { left: innerWidth - 16 - TRIG, top: innerHeight - 16 - TRIG, docked: false };
   }
   function panelStyle(t) {
@@ -1935,7 +2115,10 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     if (!shadow) return;
     const t = triggerPos();
     const trig = shadow.querySelector('.trigger');
-    if (trig) trig.style.cssText = `left:${t.left}px; top:${t.top}px;`;
+    if (trig) {
+      trig.style.cssText = `left:${t.left}px; top:${t.top}px;`;
+      trig.toggleAttribute('data-floating', !t.docked);
+    }
     const panel = shadow.querySelector('.panel');
     if (panel) panel.style.cssText = panelStyle(t);
     // Individual properties, not cssText: each dot carries its colour in an
@@ -1949,8 +2132,10 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     const dots = shadow.querySelector('.dots');
     if (dots) {
       const p = paneInfo[accentOpen];
+      const height = dots.offsetHeight;
+      const top = p && p.y + 16 + height <= innerHeight - 8 ? p.y + 16 : Math.max(8, (p?.y || 8) - height - 16);
       dots.style.cssText = p && p.visible
-        ? `left:${clamp(Math.round(p.x - 16), 8, innerWidth - DOTS_W - 8)}px; top:${Math.round(p.y + 16)}px;`
+        ? `left:${clamp(Math.round(p.x - 16), 8, Math.max(8, innerWidth - DOTS_W - 8))}px; top:${Math.round(top)}px; max-height:${innerHeight - 16}px; overflow:auto;`
         : 'display:none;';
     }
   }
@@ -1958,7 +2143,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   /** What the overlay's markup depends on, so a pass only rebuilds it when
    *  one of these actually changed. */
   const overlaySig = () => paneInfo.map(p => `${p.id}:${colorForSession(p.id)}:${p.visible}`).join('|')
-    + `|${!!navRect}`;
+    + `|${!!navRect}` + paneInfo.map(p => `:${iconForSession(p.id)}`).join('');
   let lastSig = '';
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -2019,15 +2204,16 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   const mixHex = (a, b, t) => { const x = hex2rgb(hex6(a)), y = hex2rgb(hex6(b));
     return rgb2hex(x.map((v, i) => v * t + y[i] * (1 - t))); };
   const propValue = (t, k) => k.startsWith('s.') ? (t.semantic || {})[k.slice(2)] || null
-                            : k === 'raised' ? effRaised(t) : t[k];
+                            : k === 'raised' ? effRaised(t) : k === 'deep' ? effDeep(t) : t[k];
 
   /** The first edit turns the selection into the draft. */
   function ensureDraft() {
     if (current.slug === DRAFT) return current;
     const src = editable(current);
     const d = JSON.parse(JSON.stringify(src));
+    d.deep = effDeep(src);
     delete d.isDefault;
-    Object.assign(d, { slug: DRAFT, label: 'Custom', basedOn: src.label, mode: src.mode || appMode() });
+    Object.assign(d, { slug: DRAFT, label: 'Custom', basedOn: src.label, mode: src.mode || appMode(), brightness: textOpts.brightness });
     current = d;
     localStorage.setItem(themeKey(), DRAFT);
     writeJSON(draftKey(), d);
@@ -2042,13 +2228,14 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
     if (k.startsWith('s.')) d.semantic = { ...(d.semantic || {}), [k.slice(2)]: v };
     else if (v === undefined) delete d[k];
     else d[k] = v;
+    d.brightness = textOpts.brightness;
     writeJSON(draftKey(), d);
     applySoon();
   }
   function saveDraft(name) {
     name = (name || '').trim() || `My theme ${customThemes.length + 1}`;
     const same = customThemes.find(t => t.label === name && t.mode === current.mode);
-    const t = { ...current, slug: same ? same.slug : 'user:' + Date.now().toString(36), label: name };
+    const t = { ...current, brightness: textOpts.brightness, slug: same ? same.slug : 'user:' + Date.now().toString(36), label: name };
     delete t.basedOn;
     customThemes = same ? customThemes.map(x => x.slug === t.slug ? t : x) : [...customThemes, t];
     writeJSON(LS_CUSTOM, customThemes);
@@ -2165,7 +2352,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
           <button class="mini" id="tintAuto" aria-selected="${tintVal == null}">Auto</button></div>
         <div class="hint">How much of the palette's hue the backgrounds carry. Auto fades it out on surfaces.</div>
         <div class="sl"><span>Border strength</span>
-          <input type="range" id="bmin" min="110" max="300" value="${Math.round((ed.borderMin || 1.45) * 100)}"></div>
+          <input type="range" id="bmin" min="110" max="300" value="${Math.round((ed.borderMin || (ed.mode === 'light' ? 1.65 : 1.45)) * 100)}"></div>
       </div>`;
 
     const textIsDefault = Object.keys(TEXT_DEFAULTS).every(k => (textOpts[k] ?? '') === TEXT_DEFAULTS[k]);
@@ -2179,6 +2366,7 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
       </div></div>
       <div class="row"><b>Brightness</b>
         <input type="range" id="bright" min="0" max="100" value="${textOpts.brightness}">
+        <div class="hint">Each theme supplies its text colours and brightness. Switching themes resets brightness, not fonts or weight.</div>
       </div>
       <div class="row"><b>App font</b>
         ${fontSelect('font', FONTS, false)}${customField('font')}
@@ -2211,9 +2399,9 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
         ${[['off', 'Off'], ['most', 'On']].map(([m, l]) => `<button data-expand="${m}"
           aria-selected="${expandMode === m}">${l}</button>`).join('')}
       </div>
-        <div class="hint">In a split, the pane under the pointer grows over the others, leaving a strip of each
-          showing, and shrinks back when the pointer leaves it. <b>Click</b> a pane to keep it large; click
-          anywhere outside it to let go.</div></div>
+        <div class="hint">Hover over a pane briefly to expand it smoothly, leaving a strip of its neighbours showing.
+          Passing across panes or clicking before expansion does not enlarge them instantly.
+          <b>Click the expanded pane</b> to keep it large; click outside it to let go.</div></div>
       <div class="row"><b>Status on titles</b><div class="seg">
         <button data-tstatus="on" aria-selected="${titleStatus}">On</button>
         <button data-tstatus="off" aria-selected="${!titleStatus}">Off</button>
@@ -2239,8 +2427,10 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
      ours opts out, as the app's own title-bar buttons do. */
   .trigger, .panel, .pick, .dots { -webkit-app-region: no-drag; app-region: no-drag; }
   .trigger { position: fixed; width: ${TRIG}px; height: ${TRIG}px; border-radius: 7px; border: 0;
-             padding: 0; background: transparent; cursor: pointer; pointer-events: auto;
+             padding: 0; background: ${panelBg}; cursor: pointer; pointer-events: auto;
+             box-shadow: 0 0 0 1px ${line};
              display: grid; place-items: center; }
+  .trigger[data-floating] { background: ${T.base}; border: 1px solid ${line}; box-shadow: 0 2px 8px #0003; }
   .trigger:hover, .trigger[aria-expanded="true"] { background: color-mix(in srgb, ${T.text} 10%, transparent); }
   .trigger i { width: 15px; height: 15px; border-radius: 50%; background: ${WHEEL};
                box-shadow: inset 0 0 0 3.5px ${panelBg}, 0 0 0 1px color-mix(in srgb, ${T.text} 30%, transparent);
@@ -2335,20 +2525,25 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
 
   /* Session colour: a dot in each pane's title bar. Hollow until a colour is
      chosen, so it is visible — and recognisably a colour slot — either way. */
-  .pick { position: fixed; transform: translate(-50%, -50%); width: 22px; height: 22px;
-          border-radius: 6px; border: 0; padding: 0; background: transparent; cursor: pointer;
-          pointer-events: auto; display: grid; place-items: center; }
-  .pick:hover, .pick[aria-expanded="true"] { background: color-mix(in srgb, ${T.text} 10%, transparent); }
-  .pick i { width: 11px; height: 11px; border-radius: 50%;
-            border: 1.5px solid color-mix(in srgb, ${T.text} 50%, transparent); }
-  .pick.on i { border: 0; background: var(--c);
-               box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--c) 28%, transparent); }
+  .pick { position: fixed; transform: translate(-50%, -50%); width: 24px; height: 24px;
+          border-radius: 6px; border: 1px solid ${line}; padding: 0; background: ${panelBg};
+          color: ${T.text}; cursor: pointer; pointer-events: auto; display: grid; place-items: center; }
+  .pick:hover, .pick[aria-expanded="true"] { background: ${T.base}; border-color: ${T.accent}; }
+  .pick.on { border-color: var(--c); box-shadow: inset 0 -2px var(--c); }
+  .pick svg, .avatar svg { width: 17px; height: 17px; }
+  .avatarRow { flex: 100%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
+               border-top: 1px solid ${line}; padding-top: 8px; }
+  .avatarRow > span { grid-column: 1 / -1; color: ${muted}; font-size: 10.5px; }
+  .avatar { display: grid; place-items: center; height: 30px; border: 1px solid ${line};
+            border-radius: 6px; cursor: pointer; color: ${T.text}; background: ${T.base}; }
+  .avatar[aria-pressed="true"] { border-color: ${T.accent}; background: ${panelBg}; }
+  button:focus-visible { outline: 2px solid ${T.accent}; outline-offset: 2px; }
   .dots { position: fixed; width: ${DOTS_W}px; display: flex; flex-wrap: wrap; gap: 6px; padding: 9px;
           border-radius: 12px; background: ${panelBg}; border: 1px solid ${line};
           box-shadow: 0 8px 24px #0009; pointer-events: auto; }
   .cs { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
   .cs:hover { transform: scale(1.12); }
-  .cs[aria-selected="true"] { border-color: ${T.text}; }
+  .cs[aria-selected="true"], .cs[aria-pressed="true"] { border-color: ${T.text}; }
   .cs.wheel { position: relative; background: ${WHEEL}; overflow: hidden; }
   .cs.wheel.mine { background: var(--c); box-shadow: inset 0 0 0 2px ${panelBg}; }
   .cs.wheel input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
@@ -2366,17 +2561,22 @@ html[data-cdt-border="glow"] .dframe-pane[data-cdt-accent]::after {
   .widthRow input { flex: 1; min-width: 0; }
 </style>
 
-${paneInfo.map((p, i) => { const c = colorForSession(p.id); return `
-<button class="pick${c ? ' on' : ''}" data-i="${i}" title="Session colour" aria-label="Session colour"
-  aria-expanded="${accentOpen === i}" style="display:none;${c ? `--c:${c}` : ''}"><i></i></button>`; }).join('')}
+${paneInfo.map((p, i) => { const c = colorForSession(p.id), icon = iconForSession(p.id); return `
+<button class="pick${c ? ' on' : ''}" data-i="${i}" title="Personalize session: colour, border and avatar" aria-label="Personalize session${icon ? ': ' + SESSION_ICONS.find(x => x[0] === icon)[1] : ''}"
+  aria-expanded="${accentOpen === i}" style="display:none;${c ? `--c:${c}` : ''}">${iconSVG(icon || 'personalize')}</button>`; }).join('')}
 
 ${openPane ? `<div class="dots" style="display:none">
-  <span class="cs none" data-color="" aria-selected="${!active}" title="No colour"></span>
-  ${SESSION_COLORS.map(([c, name]) => `<span class="cs" data-color="${c}" style="background:${c}"
-    title="${name}" aria-selected="${c === active}"></span>`).join('')}
+  <button class="cs none" data-color="" aria-pressed="${!active}" title="No colour" aria-label="No colour"></button>
+  ${SESSION_COLORS.map(([c, name]) => `<button class="cs" data-color="${c}" style="background:${c}"
+    title="${name}" aria-label="${name}" aria-pressed="${c === active}"></button>`).join('')}
   <label class="cs wheel${activeCustom ? ' mine' : ''}" title="Any colour" aria-selected="${activeCustom}"
     style="${activeCustom ? `--c:${active}` : ''}"><input type="color" id="anyColor"
     value="${hex6(active || '#ff453a')}"></label>
+  <div class="avatarRow">
+    <span>Session avatar</span>
+    <button class="avatar" data-icon="" title="No avatar" aria-label="No avatar" aria-pressed="${!iconForSession(openPane.id)}">${iconSVG('personalize')}</button>
+    ${SESSION_ICONS.map(([id, name]) => `<button class="avatar" data-icon="${id}" title="${name}" aria-label="${name}" aria-pressed="${iconForSession(openPane.id) === id}">${iconSVG(id)}</button>`).join('')}
+  </div>
   <div class="styleRow">
     <button data-border="line" aria-selected="${borderStyle === 'line'}">Line</button>
     <button data-border="glow" aria-selected="${borderStyle === 'glow'}">Glow</button>
@@ -2445,7 +2645,7 @@ ${open ? `<div class="panel" style="display:none">
     const textReset = q('#textReset');
     if (textReset) textReset.onclick = e => {
       e.stopPropagation();
-      textOpts = { ...TEXT_DEFAULTS, v: 3 };
+      textOpts = { ...TEXT_DEFAULTS, v: 3, brightnessTheme: `${appMode()}:${current.slug}` };
       writeJSON(LS_TEXT, textOpts); applyStyle(); renderUI();
     };
     qa('[data-weight]').forEach(b => b.onclick = e => {
@@ -2454,8 +2654,15 @@ ${open ? `<div class="panel" style="display:none">
     });
     const bright = q('#bright');
     if (bright) {
-      bright.oninput = () => { textOpts.brightness = +bright.value; applyStyle(); };
-      bright.onchange = () => { writeJSON(LS_TEXT, textOpts); renderUI(); };
+      bright.oninput = () => { textOpts.brightness = +bright.value;
+        textOpts.brightnessTheme = `${appMode()}:${current.slug}`; applyStyle(); };
+      bright.onchange = () => {
+        if (current.slug === DRAFT) {
+          current.brightness = textOpts.brightness;
+          writeJSON(draftKey(), current);
+        }
+        writeJSON(LS_TEXT, textOpts); renderUI();
+      };
       bright.onclick = e => e.stopPropagation();
     }
     for (const key of ['font', 'tfont', 'mono']) {
@@ -2532,9 +2739,18 @@ ${open ? `<div class="panel" style="display:none">
     // Session colour
     qa('.pick').forEach(b => b.onclick = e => {
       e.stopPropagation();
-      const i = +b.dataset.i;
+      const clickedPane = paneInfo[+b.dataset.i]?.el;
+      forgetPaneIds(); syncPanes();
+      const i = paneInfo.findIndex(p => p.el === clickedPane);
+      if (i < 0 || !paneInfo[i].visible) return;
       accentOpen = accentOpen === i ? -1 : i;
       open = false;
+      renderUI();
+    });
+    qa('[data-icon]').forEach(b => b.onclick = e => {
+      e.stopPropagation();
+      const id = freshSessionTarget();
+      if (id) setSessionIcon(id, b.dataset.icon);
       renderUI();
     });
     const bw = q('#bwidth');
@@ -2561,8 +2777,8 @@ ${open ? `<div class="panel" style="display:none">
     });
     qa('.cs[data-color]').forEach(sw => sw.onclick = e => {
       e.stopPropagation();
-      const p = paneInfo[accentOpen];
-      if (p) setSessionColor(p.id, sw.dataset.color || null);
+      const id = freshSessionTarget();
+      if (id) setSessionColor(id, sw.dataset.color || null);
       renderUI();
     });
     // The full picker applies live while dragging and only rebuilds the
@@ -2571,8 +2787,8 @@ ${open ? `<div class="panel" style="display:none">
     if (any) {
       any.onclick = e => e.stopPropagation();
       any.oninput = e => { e.stopPropagation();
-        const p = paneInfo[accentOpen];
-        if (p) setSessionColor(p.id, any.value.toLowerCase());
+        const id = freshSessionTarget();
+        if (id) setSessionColor(id, any.value.toLowerCase());
         const w = any.parentElement; w.classList.add('mine'); w.style.setProperty('--c', any.value); };
       any.onchange = () => renderUI();
     }
@@ -2681,9 +2897,22 @@ ${open ? `<div class="panel" style="display:none">
   const immediate = () => {
     const id = sessionId();
     if (id !== lastSession) { lastSession = id; forgetPaneIds(); }
-    paintAccent(); syncPanes();
+    paintAccent(); syncPanes(); scheduleAccents();
     if (overlaySig() !== lastSig) renderUI(); else positionOverlay();
   };
+
+  let accentRaf = 0;
+  function scheduleAccents() {
+    if (accentRaf || document.hidden) return;
+    accentRaf = requestAnimationFrame(() => {
+      accentRaf = 0;
+      forgetPaneIds();
+      const panes = listPanes();
+      paintPaneAccents(panes);
+      syncPaneIdentity(panes);
+      if (overlaySig() !== lastSig) renderUI();
+    });
+  }
 
   // Our own writes must not feed back in: applyStyle() appends the stylesheet
   // to <html>, which is itself a childList mutation on the observed root.
@@ -2691,12 +2920,14 @@ ${open ? `<div class="panel" style="display:none">
   const observer = new MutationObserver(records => {
     for (const r of records) {
       if (r.target && r.target.nodeType === 1 && r.target.closest?.(`#${HOST_ID}`)) continue;
-      if ([...r.addedNodes, ...r.removedNodes].every(ours)) continue;
+      if (r.type === 'childList' && [...r.addedNodes, ...r.removedNodes].every(ours)) continue;
+      scheduleAccents();
       schedule();
       return;
     }
   });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true,
+    attributes: true, attributeFilter: ['class', 'href', 'data-session-id'] });
 
   const origPush = history.pushState, origReplace = history.replaceState;
   history.pushState = function (...a) { const r = origPush.apply(this, a); immediate(); return r; };
@@ -2715,9 +2946,12 @@ ${open ? `<div class="panel" style="display:none">
   // Was 400ms, unconditional, each tick forcing a reflow. A modal opening is
   // not a 400ms-latency problem, and nothing needs checking while the window
   // is in the background.
+  let visRaf = 0;
   const visTimer = setInterval(() => {
-    if (document.hidden || rafId) return;
-    requestAnimationFrame(() => {
+    if (document.hidden || rafId || visRaf) return;
+    visRaf = requestAnimationFrame(() => {
+      visRaf = 0;
+      forgetPaneIds(); paintPaneAccents();
       checkExpand(); syncPanes(); paintStatus(listPanes());
       if (overlaySig() !== lastSig) renderUI(); else positionOverlay();
     });
@@ -2738,10 +2972,7 @@ ${open ? `<div class="panel" style="display:none">
     document.getElementById(STYLE_ID)?.remove();
     baseline = captureBaseline();
     fontBase = captureFonts();
-    current = storedTheme() || DEFAULT_THEME;
-    applyStyle();
-    paintAccent();
-    renderUI();
+    applyTheme(storedTheme() || DEFAULT_THEME);
   }
 
   const modeObserver = new MutationObserver(onModeChange);
@@ -2805,6 +3036,8 @@ ${open ? `<div class="panel" style="display:none">
     observer.disconnect(); modeObserver.disconnect();
     clearTimeout(pending); clearInterval(visTimer);
     if (rafId) cancelAnimationFrame(rafId);
+    if (accentRaf) cancelAnimationFrame(accentRaf);
+    if (visRaf) cancelAnimationFrame(visRaf);
     mql.removeEventListener?.('change', onModeChange);
     history.pushState = origPush; history.replaceState = origReplace;
     window.open = origOpen;
@@ -2845,7 +3078,7 @@ ${open ? `<div class="panel" style="display:none">
 
   console.log(
     `%cclaude-theme v3%c  ${allThemes().length} themes · ${baseline.size} tokens captured · active: ${current.label}\n` +
-    `⌥⇧T or the wheel next to back/forward · session colour: the dot after each pane's title · hover-expand: Panes tab · __cdtUninstall()`,
+    `⌥⇧T or the wheel next to back/forward · session appearance: the personalize icon in each pane's title · hover-expand: Panes tab · __cdtUninstall()`,
     'background:' + current.accent + ';color:#000;padding:2px 6px;border-radius:3px;font-weight:600',
     'color:inherit');
 })();

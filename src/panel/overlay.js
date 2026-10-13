@@ -64,7 +64,9 @@
     if (!bar || !end) return { x: 0, y: 0, ok: false };
     const bb = bar.getBoundingClientRect(), eb = end.getBoundingClientRect();
     if (!bb.width || !eb.width) return { x: 0, y: 0, ok: false };
-    return { x: eb.left + DOT_SLOT / 2, y: bb.top + bb.height / 2, ok: true };
+    const pb = p.getBoundingClientRect();
+    const x = eb.left + DOT_SLOT / 2, y = bb.top + bb.height / 2;
+    return { x, y, ok: x >= pb.left + 12 && x <= pb.right - 12 && y >= pb.top && y <= pb.bottom };
   }
 
   /** The last of the sidebar's top-bar buttons (back / forward / search). A
@@ -73,13 +75,16 @@
   let navEl = null;
   function findNav() {
     let r = navEl?.isConnected ? navEl.getBoundingClientRect() : null;
-    if (!r || !r.width) {
+    if (!r || !r.width || !r.height || r.right <= 0 || r.left >= innerWidth || r.top < 0
+        || getComputedStyle(navEl).visibility === 'hidden') {
       const cands = [...document.querySelectorAll('button[aria-label], a[aria-label], [role="button"][aria-label]')]
         .filter(b => { const x = b.getBoundingClientRect();
-          return x.width && x.width <= 48 && x.top < 120 && x.left < 700 && notOurs(b); });
+          return x.width && x.height && x.width <= 48 && x.top >= 0 && x.top < 120
+            && x.left >= 0 && x.left < Math.min(700, innerWidth) && !b.closest(PANE_SEL)
+            && getComputedStyle(b).visibility !== 'hidden' && notOurs(b); });
       const by = re => cands.filter(b => re.test(b.getAttribute('aria-label')))
         .sort((a, b) => b.getBoundingClientRect().right - a.getBoundingClientRect().right)[0];
-      navEl = by(/^forward$|forward/i) || by(/^back$|\bback\b/i) || by(/search/i) || null;
+      navEl = by(/^forward$|forward/i) || by(/^back$|\bback\b/i) || by(/sidebar|navigation/i) || null;
       r = navEl ? navEl.getBoundingClientRect() : null;
     }
     return r && r.width ? r : null;
@@ -94,18 +99,38 @@
       const a = titleAnchor(p);
       info.x = a.x; info.y = a.y;
       // Covered by a modal (Settings) → hide, or it would float over it.
-      const hit = document.elementsFromPoint(Math.round(r.left + r.width / 2),
-        Math.round(r.top + Math.min(r.height / 2, 160))).find(notOurs);
+      const hit = document.elementsFromPoint(Math.round(a.x), Math.round(a.y)).find(notOurs);
       info.visible = a.ok && !!info.id && !!hit && (hit === p || p.contains(hit));
       return info;
     });
     navRect = findNav();
   }
 
+  function syncPaneIdentity(panes = listPanes()) {
+    if (panes.length !== paneInfo.length || panes.some((p, i) => paneInfo[i].el !== p)) {
+      syncPanes();
+      return;
+    }
+    for (const info of paneInfo) info.id = paneSessionId(info.el, panes);
+  }
+
+  function freshSessionTarget() {
+    const p = paneInfo[accentOpen];
+    const panes = listPanes();
+    if (!p || !panes.includes(p.el)) return null;
+    forgetPaneIds();
+    p.id = paneSessionId(p.el, panes);
+    return p.id;
+  }
+
   const TRIG = 26, PANEL_W = 284, DOTS_W = 232, DOT_SLOT = 30;
   function triggerPos() {
-    if (navRect) return { left: Math.round(navRect.right + 4),
-                          top: Math.round(navRect.top + navRect.height / 2 - TRIG / 2), docked: true };
+    if (navRect) {
+      const left = Math.round(navRect.right + 4), top = Math.round(navRect.top + navRect.height / 2 - TRIG / 2);
+      const hits = document.elementsFromPoint(left + TRIG / 2, top + TRIG / 2).filter(notOurs);
+      const blocked = hits.some(el => el.closest?.(`${PANE_SEL}, button, a, input, [role="button"]`));
+      if (!blocked && left + TRIG < innerWidth - 8 && top >= 8) return { left, top, docked: true };
+    }
     return { left: innerWidth - 16 - TRIG, top: innerHeight - 16 - TRIG, docked: false };
   }
   function panelStyle(t) {
@@ -124,7 +149,10 @@
     if (!shadow) return;
     const t = triggerPos();
     const trig = shadow.querySelector('.trigger');
-    if (trig) trig.style.cssText = `left:${t.left}px; top:${t.top}px;`;
+    if (trig) {
+      trig.style.cssText = `left:${t.left}px; top:${t.top}px;`;
+      trig.toggleAttribute('data-floating', !t.docked);
+    }
     const panel = shadow.querySelector('.panel');
     if (panel) panel.style.cssText = panelStyle(t);
     // Individual properties, not cssText: each dot carries its colour in an
@@ -138,8 +166,10 @@
     const dots = shadow.querySelector('.dots');
     if (dots) {
       const p = paneInfo[accentOpen];
+      const height = dots.offsetHeight;
+      const top = p && p.y + 16 + height <= innerHeight - 8 ? p.y + 16 : Math.max(8, (p?.y || 8) - height - 16);
       dots.style.cssText = p && p.visible
-        ? `left:${clamp(Math.round(p.x - 16), 8, innerWidth - DOTS_W - 8)}px; top:${Math.round(p.y + 16)}px;`
+        ? `left:${clamp(Math.round(p.x - 16), 8, Math.max(8, innerWidth - DOTS_W - 8))}px; top:${Math.round(top)}px; max-height:${innerHeight - 16}px; overflow:auto;`
         : 'display:none;';
     }
   }
@@ -147,5 +177,5 @@
   /** What the overlay's markup depends on, so a pass only rebuilds it when
    *  one of these actually changed. */
   const overlaySig = () => paneInfo.map(p => `${p.id}:${colorForSession(p.id)}:${p.visible}`).join('|')
-    + `|${!!navRect}`;
+    + `|${!!navRect}` + paneInfo.map(p => `:${iconForSession(p.id)}`).join('');
   let lastSig = '';

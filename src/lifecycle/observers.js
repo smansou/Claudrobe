@@ -56,9 +56,22 @@
   const immediate = () => {
     const id = sessionId();
     if (id !== lastSession) { lastSession = id; forgetPaneIds(); }
-    paintAccent(); syncPanes();
+    paintAccent(); syncPanes(); scheduleAccents();
     if (overlaySig() !== lastSig) renderUI(); else positionOverlay();
   };
+
+  let accentRaf = 0;
+  function scheduleAccents() {
+    if (accentRaf || document.hidden) return;
+    accentRaf = requestAnimationFrame(() => {
+      accentRaf = 0;
+      forgetPaneIds();
+      const panes = listPanes();
+      paintPaneAccents(panes);
+      syncPaneIdentity(panes);
+      if (overlaySig() !== lastSig) renderUI();
+    });
+  }
 
   // Our own writes must not feed back in: applyStyle() appends the stylesheet
   // to <html>, which is itself a childList mutation on the observed root.
@@ -66,12 +79,14 @@
   const observer = new MutationObserver(records => {
     for (const r of records) {
       if (r.target && r.target.nodeType === 1 && r.target.closest?.(`#${HOST_ID}`)) continue;
-      if ([...r.addedNodes, ...r.removedNodes].every(ours)) continue;
+      if (r.type === 'childList' && [...r.addedNodes, ...r.removedNodes].every(ours)) continue;
+      scheduleAccents();
       schedule();
       return;
     }
   });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  observer.observe(document.documentElement, { childList: true, subtree: true,
+    attributes: true, attributeFilter: ['class', 'href', 'data-session-id'] });
 
   const origPush = history.pushState, origReplace = history.replaceState;
   history.pushState = function (...a) { const r = origPush.apply(this, a); immediate(); return r; };
@@ -90,9 +105,12 @@
   // Was 400ms, unconditional, each tick forcing a reflow. A modal opening is
   // not a 400ms-latency problem, and nothing needs checking while the window
   // is in the background.
+  let visRaf = 0;
   const visTimer = setInterval(() => {
-    if (document.hidden || rafId) return;
-    requestAnimationFrame(() => {
+    if (document.hidden || rafId || visRaf) return;
+    visRaf = requestAnimationFrame(() => {
+      visRaf = 0;
+      forgetPaneIds(); paintPaneAccents();
       checkExpand(); syncPanes(); paintStatus(listPanes());
       if (overlaySig() !== lastSig) renderUI(); else positionOverlay();
     });
@@ -113,10 +131,7 @@
     document.getElementById(STYLE_ID)?.remove();
     baseline = captureBaseline();
     fontBase = captureFonts();
-    current = storedTheme() || DEFAULT_THEME;
-    applyStyle();
-    paintAccent();
-    renderUI();
+    applyTheme(storedTheme() || DEFAULT_THEME);
   }
 
   const modeObserver = new MutationObserver(onModeChange);

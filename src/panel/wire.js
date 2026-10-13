@@ -28,7 +28,7 @@
     const textReset = q('#textReset');
     if (textReset) textReset.onclick = e => {
       e.stopPropagation();
-      textOpts = { ...TEXT_DEFAULTS, v: 3 };
+      textOpts = { ...TEXT_DEFAULTS, v: 3, brightnessTheme: `${appMode()}:${current.slug}` };
       writeJSON(LS_TEXT, textOpts); applyStyle(); renderUI();
     };
     qa('[data-weight]').forEach(b => b.onclick = e => {
@@ -37,8 +37,15 @@
     });
     const bright = q('#bright');
     if (bright) {
-      bright.oninput = () => { textOpts.brightness = +bright.value; applyStyle(); };
-      bright.onchange = () => { writeJSON(LS_TEXT, textOpts); renderUI(); };
+      bright.oninput = () => { textOpts.brightness = +bright.value;
+        textOpts.brightnessTheme = `${appMode()}:${current.slug}`; applyStyle(); };
+      bright.onchange = () => {
+        if (current.slug === DRAFT) {
+          current.brightness = textOpts.brightness;
+          writeJSON(draftKey(), current);
+        }
+        writeJSON(LS_TEXT, textOpts); renderUI();
+      };
       bright.onclick = e => e.stopPropagation();
     }
     for (const key of ['font', 'tfont', 'mono']) {
@@ -115,9 +122,18 @@
     // Session colour
     qa('.pick').forEach(b => b.onclick = e => {
       e.stopPropagation();
-      const i = +b.dataset.i;
+      const clickedPane = paneInfo[+b.dataset.i]?.el;
+      forgetPaneIds(); syncPanes();
+      const i = paneInfo.findIndex(p => p.el === clickedPane);
+      if (i < 0 || !paneInfo[i].visible) return;
       accentOpen = accentOpen === i ? -1 : i;
       open = false;
+      renderUI();
+    });
+    qa('[data-icon]').forEach(b => b.onclick = e => {
+      e.stopPropagation();
+      const id = freshSessionTarget();
+      if (id) setSessionIcon(id, b.dataset.icon);
       renderUI();
     });
     const bw = q('#bwidth');
@@ -144,8 +160,8 @@
     });
     qa('.cs[data-color]').forEach(sw => sw.onclick = e => {
       e.stopPropagation();
-      const p = paneInfo[accentOpen];
-      if (p) setSessionColor(p.id, sw.dataset.color || null);
+      const id = freshSessionTarget();
+      if (id) setSessionColor(id, sw.dataset.color || null);
       renderUI();
     });
     // The full picker applies live while dragging and only rebuilds the
@@ -154,8 +170,8 @@
     if (any) {
       any.onclick = e => e.stopPropagation();
       any.oninput = e => { e.stopPropagation();
-        const p = paneInfo[accentOpen];
-        if (p) setSessionColor(p.id, any.value.toLowerCase());
+        const id = freshSessionTarget();
+        if (id) setSessionColor(id, any.value.toLowerCase());
         const w = any.parentElement; w.classList.add('mine'); w.style.setProperty('--c', any.value); };
       any.onchange = () => renderUI();
     }

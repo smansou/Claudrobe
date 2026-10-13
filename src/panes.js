@@ -54,7 +54,7 @@
   const paneIds = new WeakMap(); // pane -> { id, at }
   function paneSessionId(pane, panes) {
     const c = paneIds.get(pane);
-    if (c && Date.now() - c.at < 1500) return c.id;
+    if (c && Date.now() - c.at < 48) return c.id;
     let id = null;
     try { id = fiberSession(pane); } catch {}
     if (!id) {
@@ -75,6 +75,11 @@
     html.style.setProperty('--cdt-border-w', String(borderWidth));
     html.style.setProperty('--cdt-fill', String(fillPct()));
     const panes = listPanes();
+    paintPaneAccents(panes);
+    paintRows();
+    paintStatus(panes);
+  }
+  function paintPaneAccents(panes = listPanes()) {
     for (const p of panes) {
       const color = colorForSession(paneSessionId(p, panes));
       if (color) {
@@ -84,8 +89,6 @@
         p.style.removeProperty(VAR); p.removeAttribute('data-cdt-accent');
       }
     }
-    paintRows();
-    paintStatus(panes);
   }
   const clearPanes = () => {
     for (const p of document.querySelectorAll('[data-cdt-accent]')) {
